@@ -1,0 +1,15 @@
+.postContent{
+    cursor: pointer;
+}
+.post{
+    padding: .5rem;
+    border-radius: .5rem;
+    background: #1A1A1B;
+}
+.delete-btn {
+    margin-left: auto;
+    height: fit-content;
+}
+.title{
+    cursor: pointer;
+}

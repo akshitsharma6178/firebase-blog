@@ -1,0 +1,27 @@
+.newpost-input{
+    flex-grow: 1;
+    resize: none;
+    height: 50px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    border-radius: .5em;
+    padding: .5em;
+    font-size: inherit;
+    font-family: inherit;
+    border: 0.05px transparent white;
+    background-color: #272729;
+    color: white;
+    line-height: 1.4;
+    width: 75%;
+    margin-left: 12.5%;
+    margin-right: 12.5%;
+}
+.newpost-input:active, .newpost-input:focus,.newpost-input:hover{
+    background-color: #1A1A1B;
+}
+
+.new-post{
+    background: #1A1A1B;
+    padding: 5px;
+    border-radius: 0.5rem;
+}

@@ -1,0 +1,25 @@
+.main-post{
+    background-color: #1A1A1B;
+    margin: auto;
+    border-radius: 1%;
+    padding: 3em;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    width: 60rem;
+}
+
+.comments-section{
+    display: flex;
+    flex-direction: column;
+    row-gap: 7px;
+}
+
+.decorator{
+    height: 1px;
+    background:#c8cbcd;
+    width: 50%;
+    margin: 5% 25% 5% 25%;
+}

@@ -1,0 +1,22 @@
+.create-post-box {
+    background-color: #1A1A1B;
+    width: 60rem;
+    border-radius: .5em;
+}
+
+.newtext-area{
+    height: 20rem !important;
+}
+
+.postbtn{
+    margin-left: 91%; 
+    margin-bottom: 1rem;
+    border-radius: 2.5em;
+}
+
+.main-new-post{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+}
