@@ -182,6 +182,10 @@
     margin-right: .25em;
   }
   
+  .close-btn{
+    width: 1.5rem;
+  }
+
   .icon-btn:hover,
   .icon-btn:focus-visible {
     color: #C8CBCD;
@@ -190,6 +194,10 @@
   .icon-btn-active,
   .icon-btn.danger {
     --hue: 0;
+  }
+
+  .icon-btn.lightgray {
+    color: lightgray;
   }
   
   .icon-btn-active {
