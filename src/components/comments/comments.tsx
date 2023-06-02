@@ -3,8 +3,9 @@ import { FaEdit, FaHeart, FaRegHeart, FaReply, FaTrash } from "react-icons/fa"
 import { CommentList } from "../commentList/commentList"
 import { useEffect, useState } from "react"
 import { CommentForm } from "../commentForm/commentForm"
-import { deleteComment, getComments, postNewComment, updateComment, updateLikeCount } from "../../services/firebase"
+import { auth, deleteComment, getComments, postNewComment, updateComment, updateLikeCount } from "../../services/firebase"
 import { v4 as uuidv4} from 'uuid';
+import { User } from "firebase/auth"
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
@@ -36,8 +37,16 @@ export function Comment(props: cmmtProp) {
   const [isReplying, setIsReplying] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [childComments, setChildComments] = useState<childCommntStructure>({});
-
-
+  const [user, setUser] = useState<User | null>(null); 
+  useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        setUser(currentUser);
+      });
+  
+      return () => {
+        unsubscribe();
+      };
+    }, [user]); 
   useEffect(()=>{
     const getRepliesRef = async function(){
       const data = await getComments(props.id)
@@ -100,8 +109,9 @@ export function Comment(props: cmmtProp) {
             isactive={isReplying? 1 : 0}
             im={FaReply}
             aria-label={isReplying ? "Cancel Reply" : "Reply"}
+            disabled = {!auth.currentUser ? true : false} 
           />
-          {props.user === props.user && (
+          {auth.currentUser?.displayName === props.user && (
             <>
               <IconBtn
                 onClick={() => setIsEditing(prev => !prev)}

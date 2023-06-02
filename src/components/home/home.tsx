@@ -3,6 +3,8 @@ import { HomePost } from "../homePostView/homePostView";
 import { getHomePageObj } from "../../services/firebase";
 import { useNavigate } from 'react-router-dom'
 import "./home.css"
+import { auth } from "../../services/firebase";
+import { User } from "firebase/auth";
 
 interface MyType {
     [key: string]: {
@@ -12,11 +14,16 @@ interface MyType {
     }
 }
 
+
+
+
 export function Home() {
 
     const navigate = useNavigate();
     const [posts, setPosts] = useState<MyType>({})
     const [validLoad, setValidLoad] = useState(false)
+    const [user, setUser] = useState<User | null>(null);
+    
 
 
     useEffect(() => {
@@ -31,16 +38,30 @@ export function Home() {
       } 
       fetchPosts();
     },[validLoad]);
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+          setUser(currentUser);
+        });
+    
+        return () => {
+          unsubscribe();
+        };
+      }, [user]); 
 
     const setLoad = () => {
         setValidLoad(!validLoad);
     }
 
     return (
+        <>
         <div className="main-body">
-            <div className="new-post">
-                <textarea onClick={() => navigate('new')} placeholder="Create Post" className="newpost-input"></textarea>
-            </div>
+            {
+                auth.currentUser || user?
+                <div className="grid-item new-post">
+                    <textarea onClick={() => navigate('new')} placeholder="Create Post" className="newpost-input"></textarea>
+                </div> :
+                <></>
+            }
         {  JSON.stringify(posts) !== '{}' ? Object.keys(posts).map(post => {
                 return <HomePost 
                 key={post} 
@@ -50,6 +71,7 @@ export function Home() {
                 /> }) : <p>No Posts</p>
         }
         </div>
+        </>
     )
 }
 

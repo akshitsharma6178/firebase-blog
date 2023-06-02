@@ -1,0 +1,61 @@
+.main{
+    height: 100%;
+    background: #1A1A1B;
+    width: 19%;
+    position: fixed;
+    margin-top: -3rem;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    z-index: 4;
+    border-right: solid 1px #343536;
+}
+
+.heading{
+    font-size: 0.6rem;
+    color: #7D7E7F;
+    font-weight: 700;
+    cursor: default;
+}
+
+.menu-tile{
+    display: flex;
+    width: 100%;
+    gap: 0.4rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    justify-content: flex-start;
+    align-content: center;
+    padding-top:0.5rem;
+    padding-bottom:0.5rem;
+}
+
+.menu-tile:hover{
+    background-color: #232324;
+    cursor: pointer;
+}
+
+.menu-title{
+    font-size: 0.8rem;
+}
+
+.menu-tile path{
+    stroke: white;
+}
+
+.sidenav-btn{
+    align-self: flex-end;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.sidenav-decorator{
+    align-self: flex-end;
+    margin-top: auto;
+    margin-bottom: 0rem;
+    background-color: #343536;
+}

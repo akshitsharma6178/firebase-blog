@@ -5,6 +5,10 @@ import { CommentForm } from "../commentForm/commentForm";
 import { v4 as uuidv4} from 'uuid';
 import { Comment } from "../comments/comments";
 import "./individualPost.css"
+import { auth } from "../../services/firebase";
+import { User } from "firebase/auth";
+import { FaPlus } from "react-icons/fa";
+import { LoginDialog } from "../loginDialog/loginDialog";
 
 interface postObjStructure {
     title: string,
@@ -30,7 +34,18 @@ export function IndividualPost() {
     const [error, setError] = useState("")
     const [cmmtData, setCmmtData] = useState<commntStructure>({})
     const [isComments, setIsComments] = useState(false)
-    const [validLoad, setValidLoad] = useState(false)  
+    const [validLoad, setValidLoad] = useState(false) 
+    const [user, setUser] = useState<User | null>(null); 
+    const [isLogin, setisLogin] = useState(false);
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+          setUser(currentUser);
+        });
+    
+        return () => {
+          unsubscribe();
+        };
+      }, [user]); 
     
     useEffect(()=>{
         const fetchData = async () => {
@@ -57,19 +72,25 @@ export function IndividualPost() {
 
 
     return (
-        <div className="main-post">
+        <div className="main-post main-body">
         <h1>{postData.title}</h1>
         <article>{postData.content}</article>
-        <h3 className="comments-title">Comment as {"user"}</h3>
+        {auth.currentUser || user? <h3 className="comments-title">Comment as {auth.currentUser?.displayName}</h3> : <></>}
         <section className="comments-section">
-            <CommentForm
-                loading={loading}
-                error={error}
-                initialValue=""
-                autoFocus={false}
-                onSubmit={postCommentFunction}
-                setLoad = {setLoad}
-            />
+           { auth.currentUser || user?
+                <CommentForm
+                    loading={loading}
+                    error={error}
+                    initialValue=""
+                    autoFocus={false}
+                    onSubmit={postCommentFunction}
+                    setLoad = {setLoad}
+                /> :
+                <>
+                    <button className="btn cmmt-btn" onClick={() => {setisLogin(true)}}><FaPlus /> Add a Comment</button>
+                    {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>}
+                </>
+            }
             <div className="decorator"></div>
             {  JSON.stringify(cmmtData) !== '{}'? Object.keys(cmmtData).map(cmmt => {
                 return <Comment 

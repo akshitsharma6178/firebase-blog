@@ -3,6 +3,7 @@ import { addPost } from "../../services/firebase";
 import { v4 as uuidv4} from 'uuid';
 import { useNavigate} from 'react-router-dom';
 import "./newPost.css"
+import { auth } from "../../services/firebase";
 
 export function NewPost() {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ export function NewPost() {
         const newPost = {[uuidv4()]: {
             title: title,
             content: content,
-            user: "user"
+            user: auth.currentUser?.displayName
         }}
         addPost(newPost)
         navigate('/');

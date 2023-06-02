@@ -23,10 +23,14 @@
 
   .main-body {
     display: grid;
-    width: 60rem;
+    width: 40rem;
     margin: auto;
-    row-gap: 1rem;
-    margin-top: 5%;
+    row-gap: 0.5rem;
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+    left: 7.5rem;
+    position: relative;
+    align-items: center;
   }
 
   .expand-text{
@@ -259,3 +263,8 @@
   .btn[disabled] {
     --color: hsl(var(--hue), 20%, 74%);
   }
+
+  /* .icon-btn[disabled]{
+    color: gray;
+    cursor: default;
+  } */

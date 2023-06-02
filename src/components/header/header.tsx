@@ -1,53 +1,34 @@
-import { useState } from 'react';
-import { FaGoogle, FaApple } from 'react-icons/fa';
-import { GrClose } from 'react-icons/gr'
+import { useEffect, useState } from 'react';
 import './header.css'
-import { IconBtn } from '../Icons/IconBtn';
-// import { useNavigate} from 'react-router-dom'
+import { auth, logout } from '../../services/firebase';
+import { User } from 'firebase/auth';
+import { LoginDialog } from '../loginDialog/loginDialog';
 export function Head() {
     // const navigate = useNavigate();
     const [isLogin, setisLogin] = useState(false);
-    const [isActiveMail, setActiveMail] = useState(false);
-    const [emailValue, setEmailValue] = useState('');
-    const [passValue, setPassValue] = useState('');
-    const [isActivePass, setActivePass] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+          setUser(currentUser);
+        });
+    
+        return () => {
+          unsubscribe();
+        };
+      }, [user]); 
+
     return (
         <>
         <div className='mainHead'>
-            <button className="lgn-btn-main" onClick={()=> setisLogin(true)}>Log in</button>
-            {isLogin ?(
-            <>
-             <div className='overlay'></div>
-             <dialog className="fullscreen-dialog" open>
-                <div className='top-section'>
-                    <div className='close-btn'>
-                        <IconBtn 
-                        im={GrClose}
-                        onClick={()=>setisLogin(false)}
-                        color='lightgray'
-                        closeBtn={true}
-                        />
-                    </div>
-                    <p className='title-lgn'>Log in</p>
-                </div>
-                <div className='brand-lgn'>
-                    <button className='box brand-box'><FaGoogle /><span className="lgn-gtn-brand">Continue with Google</span></button>
-                    <button className='box brand-box'><FaApple /><span className="lgn-gtn-brand">Continue with Apple</span></button>
-                </div>
-                <div className='decorator'></div>
-                <form method="dialog">
-                    <div className={isActiveMail || emailValue? 'inp-block active' : 'inp-block'}>
-                        <label className="box-label" htmlFor="email">Email</label>
-                        <input value={emailValue} className="box inp" onChange={(event)=> setEmailValue(event.target.value)} onFocus={()=>setActiveMail(true)} onBlur={()=>setActiveMail(false)} type="email" name='email' />
-                    </div>
-                    <div className={isActivePass || passValue? 'inp-block active' : 'inp-block'}>
-                        <label className="box-label" htmlFor="password">Password</label>
-                        <input value={passValue} className="box inp" onChange={(event)=> setPassValue(event.target.value)} onFocus={()=>setActivePass(true)} onBlur={()=>setActivePass(false)} type="password" name='password' />
-                    </div>
-                    <button className='box lgn-btn' type='submit'>Log in</button>
-                </form>
-             </dialog>
-             </>): <></>}
+           { !auth.currentUser || !user? <><button className="lgn-btn-main" onClick={()=> setisLogin(true)}>Log in</button>
+            {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>
+             }</> : <>
+                <span>{auth.currentUser.displayName}</span>
+                <button className='btn icon-btn' onClick={()=> {logout(); setisLogin(false)}}>
+                    <svg className="svg" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
+                </button>
+             </>}
         </div>
         </>
     )

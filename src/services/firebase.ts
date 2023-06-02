@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc, deleteField, setDoc, deleteDoc, getDocs, collection, query, where } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth"
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { arrayUnion, arrayRemove } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -22,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
 async function getHomePageObj() {
     const posts = await getDoc(doc(db, "posts", "allPosts"));
@@ -41,25 +42,35 @@ async function addPost(postObj: {[key: string]: object}){
     }
 }
 
-async function registerUserWithEmailAndPassword(email: string, password: string) {
-    createUserWithEmailAndPassword(auth, email, password).then ((userCredential) => {
-        const user = userCredential.user;
-        return user;
-    })
-    .catch((e) => {
-        console.error("Register Error ", e.message)
-    })
+async function registerUserWithEmailAndPassword(name: string,email: string, password: string) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        auth.currentUser? await updateProfile(auth.currentUser, {
+            displayName: name}): null
+        // await auth.currentUser?.getIdToken().then((idToken) => {
+        //     localStorage.setItem('authToken', idToken)
+        // })
+}
+
+async function logInwithGoogle(){
+    signInWithPopup(auth, provider)
 }
 
 async function logInWithEmailAndPassword(email: string, password: string){
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
         const user = userCredential.user;
+        // user.getIdToken().then((idToken)=> {
+        //     localStorage.setItem('authToken', idToken)
+        // })
         return user;
     })
     .catch((e) => {
         console.error("Login Error", e.message)
     })
 } 
+
+async function logInWithToken(token: string){
+    signInWithCustomToken(auth, token)
+}
 
 function logout(){
     signOut(auth).then(() => {
@@ -85,7 +96,7 @@ async function getPostData(key: string){
 async function postNewComment(key: string, message: string, parentId: string){
     const commntRef = doc(db, 'comments', key);
     const cmmtObj = {
-        owner: "user",
+        owner: auth.currentUser?.displayName,
         message: message,
         parent: parentId,
         createdAt: new Date().toISOString().slice(0, 19),
@@ -161,5 +172,8 @@ export {
     updateLikeCount,
     toggleLike,
     manageUserLikedComment,
-    manageUserRemovedLikedComment
+    manageUserRemovedLikedComment,
+    logInWithToken,
+    logInwithGoogle,
+    auth
 }
