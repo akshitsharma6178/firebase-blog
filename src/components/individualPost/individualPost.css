@@ -1,15 +1,11 @@
 .main-post{
-    background-color: #1A1A1B;
-    margin: auto;
-    border-radius: 0.25rem;
-    padding: 3em;
-    display: flex;
-    flex-direction: column;
-    row-gap: 10px;
-    margin-top: 5%;
-    margin-bottom: 5%;
-    border: solid 1px #343536;
-    width: 60rem;
+    background-color: #1A1A1B !important;
+    /* border-radius: 0.25rem !important; */
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: auto !important;
+    /* row-gap: 10px !important; */
+    /* border: solid 1px #343536 !important; */
 }
 
 .comments-section{

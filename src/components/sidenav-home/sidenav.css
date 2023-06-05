@@ -1,9 +1,9 @@
 .main{
     height: 100%;
     background: #1A1A1B;
-    width: 19%;
+    /* width: 19%; */
     position: fixed;
-    margin-top: -3rem;
+    margin-top: 4rem;
     display: flex;
     flex-direction: column;
     padding: 2rem;

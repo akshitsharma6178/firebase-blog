@@ -9,7 +9,8 @@ interface HomePostProps {
         title: string;
         content: string;
         user: string;
-    }
+    },
+    className: string
 }
 type Page = {
     [key: string]: string;
@@ -41,7 +42,7 @@ export function HomePost(props: HomePostProps){
 
     return (
         <>
-        <div className="post">
+        <div className={`post ${props.className}`}>
             <div className="post-content">
                 <h1 className="title" onClick={handleNavigateandStorage}>{title}</h1>
                 <h6>{user}</h6>

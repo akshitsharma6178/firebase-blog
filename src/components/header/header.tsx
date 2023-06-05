@@ -3,7 +3,11 @@ import './header.css'
 import { auth, logout } from '../../services/firebase';
 import { User } from 'firebase/auth';
 import { LoginDialog } from '../loginDialog/loginDialog';
-export function Head() {
+
+interface headerPropStruct {
+  className: string
+}
+export function Head(props: headerPropStruct) {
     // const navigate = useNavigate();
     const [isLogin, setisLogin] = useState(false);
     const [user, setUser] = useState<User | null>(null);
@@ -20,7 +24,7 @@ export function Head() {
 
     return (
         <>
-        <div className='mainHead'>
+        <div className={`mainHead ${props.className}`}>
            { !auth.currentUser || !user? <><button className="lgn-btn-main" onClick={()=> setisLogin(true)}>Log in</button>
             {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>
              }</> : <>

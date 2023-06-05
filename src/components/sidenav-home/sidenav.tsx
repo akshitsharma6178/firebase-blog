@@ -8,7 +8,11 @@ type Page = {
     [key: string]: string;
   };
 
-export function Sidenav() {
+interface sidenavPropStruct {
+    className: string
+}
+
+export function Sidenav( props: sidenavPropStruct) {
     const navigate = useNavigate();
     const initalRecentPages = localStorage.getItem('recentPages') ? JSON.parse(localStorage.getItem('recentPages') as string) :  [];
     const [recentPages, setRecentPages] = useState<Page[]>(initalRecentPages);
@@ -25,7 +29,7 @@ export function Sidenav() {
         }
     })
     return (
-        <div className="main">
+        <div className={`main ${props.className}`}>
             <span className='heading'>FEEDS</span>
             <div onClick={()=>navigate('/')} className='menu-tile'>
                 <GrHomeRounded />
@@ -37,7 +41,7 @@ export function Sidenav() {
                     return (
                         <div key={index} className='menu-tile'>
                             {Object.keys(page).map((post)=> {
-                                return <><GrBook /> <span onClick={()=>navigate(`/post/${post}`)} className='menu-title'>{page[post]}</span></>
+                                return <div  key={post}><GrBook /> <span onClick={()=>navigate(`/post/${post}`)} className='menu-title'>{page[post]}</span></div>
                             })}
                         </div>
                         )

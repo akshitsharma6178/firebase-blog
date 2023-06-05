@@ -157,6 +157,11 @@ async function manageUserRemovedLikedComment(user: string, cmmtId: string){
     })
 }
 
+async function getFilters(){
+    const filterObj = await getDoc(doc(db, "posts", "filters"));
+    return filterObj.data()
+}
+
 export { 
     getHomePageObj, 
     addPost, 
@@ -175,5 +180,6 @@ export {
     manageUserRemovedLikedComment,
     logInWithToken,
     logInwithGoogle,
-    auth
+    auth,
+    getFilters
 }

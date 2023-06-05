@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom'
 import "./home.css"
 import { auth } from "../../services/firebase";
 import { User } from "firebase/auth";
+import { FilterMenu } from "../filterMenu/filterMenu";
 
 interface MyType {
     [key: string]: {
         title: string;
         content: string;
         user: string;
+        category: string
     }
 }
 
@@ -21,6 +23,7 @@ export function Home() {
 
     const navigate = useNavigate();
     const [posts, setPosts] = useState<MyType>({})
+    const [filteredPosts, setFilteredPosts] = useState<MyType>({});
     const [validLoad, setValidLoad] = useState(false)
     const [user, setUser] = useState<User | null>(null);
     
@@ -55,6 +58,11 @@ export function Home() {
     return (
         <>
         <div className="main-body">
+        <FilterMenu 
+        className="post fliter-grid-item"
+        posts={posts}
+        setPosts={setFilteredPosts}
+        />
             {
                 auth.currentUser || user?
                 <div className="grid-item new-post">
@@ -62,12 +70,24 @@ export function Home() {
                 </div> :
                 <></>
             }
-        {  JSON.stringify(posts) !== '{}' ? Object.keys(posts).map(post => {
+        {  Object.keys(filteredPosts).length > 0 ? (
+                Object.keys(filteredPosts).map((post) => (
+                    <HomePost
+                      key={post}
+                      setLoad={setLoad}
+                      keyId={post}
+                      postObj={filteredPosts[post]}
+                      className="grid-item"
+                    />
+                  ))
+            ) :
+        JSON.stringify(posts) !== '{}' ? Object.keys(posts).map(post => {
                 return <HomePost 
                 key={post} 
                 setLoad={setLoad} 
                 keyId={post} 
                 postObj={posts[post]} 
+                className="grid-item"
                 /> }) : <p>No Posts</p>
         }
         </div>

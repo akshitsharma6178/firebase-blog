@@ -24,9 +24,11 @@ function App() {
   // })
   return (
     <>
-    <Head />
-    <div>
-      <Sidenav />
+    <div className='main-container'>
+      <Head 
+      className='header-grid'/>
+      <Sidenav 
+      className='sidenav-grid'/>
       <Routes>
         <Route path="/" element={ <Home/>} />
         <Route path="/new" element={ <NewPost/>} />

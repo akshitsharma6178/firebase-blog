@@ -1,0 +1,91 @@
+import { Chip } from "@mui/material"
+import { useEffect, useState } from "react"
+import { getFilters } from "../../services/firebase"
+import "./filterMenu.css"
+
+interface MyType {
+    [key: string]: {
+        title: string;
+        content: string;
+        user: string;
+        category: string
+    }
+}
+
+interface filterPropStructure {
+    className? : string
+    setPosts? : React.Dispatch<React.SetStateAction<MyType>>;
+    setCategory? : (caterogy: string) => void
+    posts? : MyType
+}
+
+export function FilterMenu(props: filterPropStructure) {
+
+    const [filters, setFilters] = useState([])
+    const [validLoad, setValidLoad] = useState(false)
+    const [isSelected, setisSelected] = useState<string[]>([])
+
+    useEffect(() => {
+        const fetchFilters = async() => {
+            try {
+                const data = await getFilters();
+                data? setFilters(data['main']) : '';
+            }
+            catch(e) {
+              console.error("Error fetching data:", e);
+            }
+        } 
+        fetchFilters();
+    },[filters, validLoad])
+
+    const setLoad = () => {
+        setValidLoad(!validLoad);
+    }
+
+    function isFilterSelected(filterName: string) {
+        return isSelected.includes(filterName)
+    }
+
+    function setPosts(filterName: string){
+        const originalPosts = { ...props.posts };
+        const filteredPosts = Object.keys(originalPosts)
+        .filter((e) => originalPosts[e].category === filterName)
+        .reduce((res, key) => {
+            res[key] = originalPosts[key];
+            return res;
+        }, {} as MyType);
+        props.setPosts? props.setPosts(filteredPosts) : null;
+    }
+
+    function handleClick(filterName: string) {
+        const arr = [filterName];
+        setisSelected(arr);
+        props.posts? setPosts(filterName): null
+        props.setCategory? props.setCategory(arr[0]) : null
+      }
+      
+
+    function handleDelete() {
+        const arr: string[] = []
+        setisSelected(arr)
+        props.setPosts? props.setPosts({}) : null;
+        setLoad()
+    }
+    return (
+        <div className={`${props.className}`}>
+            <div className="filter-content">
+                {
+                    filters.map((filter) => {
+                        return <Chip 
+                        key={filter}
+                        className={`chips ${isFilterSelected(filter) ? "selected-chip": 'not-selected-chip'}`} 
+                        label={`${filter}`} 
+                        onClick={()=>handleClick(filter)} 
+                        onDelete={isFilterSelected(filter) ? handleDelete : undefined}
+                        />
+                    })
+                }
+            </div>
+        </div>
+    )
+}

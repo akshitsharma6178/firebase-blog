@@ -1,17 +1,17 @@
 .mainHead{
    display: flex;
-   width: 100%;
+   /* width: 100%; */
    background: #1A1A1B;
-   min-height: 60px;
+   /* min-height: 60px; */
    flex-direction: row;
    justify-content: flex-end;
    align-content: center;
    flex-wrap: wrap;
-   padding-right: 5%;
-   top: 0px;
+   /* padding-right: 5%; */
+   /* top: 0px; */
    gap: 2rem;
    z-index: 5;
-   position: fixed;
+   /* position: fixed; */
    border-bottom: solid 1px #343536;
 }
 .button-head{

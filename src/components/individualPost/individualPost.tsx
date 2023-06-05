@@ -13,7 +13,8 @@ import { LoginDialog } from "../loginDialog/loginDialog";
 interface postObjStructure {
     title: string,
     content: string,
-    user: string
+    user: string,
+    category: string
 }
 
 interface commntStructure {
@@ -29,7 +30,7 @@ interface commntStructure {
 export function IndividualPost() {
 
     const {postId} = useParams();
-    const [postData, setPostData] = useState<postObjStructure>({title: '', content: '', user: ''})
+    const [postData, setPostData] = useState<postObjStructure>({title: '', content: '', user: '', category: ''})
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [cmmtData, setCmmtData] = useState<commntStructure>({})
@@ -72,7 +73,7 @@ export function IndividualPost() {
 
 
     return (
-        <div className="main-post main-body">
+        <div className="main-body main-post">
         <h1>{postData.title}</h1>
         <article>{postData.content}</article>
         {auth.currentUser || user? <h3 className="comments-title">Comment as {auth.currentUser?.displayName}</h3> : <></>}
