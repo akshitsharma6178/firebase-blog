@@ -23,5 +23,6 @@
 .new-post{
     background: #1A1A1B;
     padding: 5px;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
+    border: solid 1px #343536;
 }

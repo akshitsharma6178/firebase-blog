@@ -7,10 +7,10 @@ import { auth, deleteComment, getComments, postNewComment, updateComment, update
 import { v4 as uuidv4} from 'uuid';
 import { User } from "firebase/auth"
 
-const dateFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-  timeStyle: "short",
-})
+// const dateFormatter = new Intl.DateTimeFormat(undefined, {
+//   dateStyle: "medium",
+//   timeStyle: "short",
+// })
 
 interface cmmtProp {
   id: string,
@@ -61,6 +61,30 @@ export function Comment(props: cmmtProp) {
     setIsReplying(false)
   }
 
+  function getTimeDifference(){
+    const createdAtDateUTC = new Date(props.createdAt)
+    const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
+    const createdAtLocal = new Date(createdAtDateUTC.getTime() - timezoneOffset)
+    const timeDifference = Date.now() - createdAtLocal.getTime();
+    // Define the time intervals for formatting
+    const minute = 60 * 1000; // 1 minute = 60 seconds * 1000 milliseconds
+    const hour = 60 * minute;
+    const day = 24 * hour;
+
+    // Determine the appropriate format based on the time difference
+    let formattedTime;
+    if (timeDifference < minute) {
+      formattedTime = `${Math.floor(timeDifference / 1000)} seconds ago`;
+    } else if (timeDifference < hour) {
+      formattedTime = `${Math.floor(timeDifference / minute)} minutes ago`;
+    } else if (timeDifference < day) {
+      formattedTime = `${Math.floor(timeDifference / hour)} hours ago`;
+    } else {
+      formattedTime = `${Math.floor(timeDifference / day)} days ago`;
+    }
+    return formattedTime
+  }
+
   function onCommentReply(message: string) {
     return postNewComment(uuidv4(), message, props.id).then(props.setLoad)
   }
@@ -82,7 +106,8 @@ export function Comment(props: cmmtProp) {
         <div className="header">
           <span className="name">{props.user}</span>
           <span className="date">
-            {dateFormatter.format(Date.parse(props.createdAt))}
+            {/* {dateFormatter.format(Date.parse(props.createdAt))} */}
+            {getTimeDifference()}
           </span>
         </div>
         {isEditing ? (

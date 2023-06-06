@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, updateDoc, getDoc, deleteField, setDoc, deleteDoc, getDocs, collection, query, where } from "firebase/firestore";
+import { getFirestore, doc, updateDoc, getDoc, deleteField, setDoc, deleteDoc, getDocs, collection, query, where, orderBy } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { arrayUnion, arrayRemove } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -8,26 +8,60 @@ import { arrayUnion, arrayRemove } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseConfig = {
+//   apiKey: "AIzaSyALSOE8H14F-bAimyccnRfpfKCIX2z8wbE",
+//   authDomain: "major-project-19028.firebaseapp.com",
+//   projectId: "major-project-19028",
+//   storageBucket: "major-project-19028.appspot.com",
+//   messagingSenderId: "537624713062",
+//   appId: "1:537624713062:web:c509f56c66eb171a2b5aa7",
+//   measurementId: "G-HB40RNBEGT"
+// };
+
+//backup config
+
 const firebaseConfig = {
-  apiKey: "AIzaSyALSOE8H14F-bAimyccnRfpfKCIX2z8wbE",
-  authDomain: "major-project-19028.firebaseapp.com",
-  projectId: "major-project-19028",
-  storageBucket: "major-project-19028.appspot.com",
-  messagingSenderId: "537624713062",
-  appId: "1:537624713062:web:c509f56c66eb171a2b5aa7",
-  measurementId: "G-HB40RNBEGT"
-};
+    apiKey: "AIzaSyBtwJPCyGVUUiYCMCG3u2F12oH5OSMF66c",
+    authDomain: "try1-e8d1b.firebaseapp.com",
+    databaseURL: "https://try1-e8d1b.firebaseio.com",
+    projectId: "try1-e8d1b",
+    storageBucket: "try1-e8d1b.appspot.com",
+    messagingSenderId: "316167707997",
+    appId: "1:316167707997:web:4fa2add4d30cececb0dcb4",
+    measurementId: "G-N7X1QMXV5Q"
+  };
+
+type filterType = {
+    [key: string] : []
+}
+
+interface cacheStructure {
+    [key: string] : object | undefined,
+    homePageObj? : object,
+    filters? : filterType
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
+let cache : cacheStructure = {}
 
 async function getHomePageObj() {
+    console.log("getHomePage")
+    cache = getLocalCache()
+    if(cache.homePageObj) {
+        return cache.homePageObj
+    }
     const posts = await getDoc(doc(db, "posts", "allPosts"));
-    return posts.data();
+    const data = posts.data();
+    cache.homePageObj = data;
+    setLocalCache()
+    return data
+
 }
+
 
 async function addPost(postObj: {[key: string]: object}){
     try {
@@ -36,6 +70,7 @@ async function addPost(postObj: {[key: string]: object}){
         const docRefForPostData = doc(db, "postData", key);
         await updateDoc(docRefForAllPosts, postObj);
         await setDoc(docRefForPostData, postObj[key])
+        delete cache.homePageObj
     }
     catch (e) {
         console.error("Error adding document: ", e);
@@ -88,9 +123,16 @@ async function deletePost(key: string){
 }
 
 async function getPostData(key: string){
+    cache = getLocalCache();
+    if (cache[key]) {
+        return cache[key]
+    }
     const docRef = doc(db, "postData", key);
     const post = await getDoc(docRef)
-    return post.data()
+    const data = post.data()
+    cache[key] = data
+    setLocalCache()
+    return data
 }
 
 async function postNewComment(key: string, message: string, parentId: string){
@@ -118,7 +160,7 @@ async function deleteComment(key: string){
 
 async function getComments(key: string){
     const commntRef = collection(db, 'comments');
-    const commntQuery = query(commntRef, where("parent","==",key))
+    const commntQuery = query(commntRef, where("parent","==",key), orderBy("createdAt", "desc"))
     const commnts = await getDocs(commntQuery)
     const commntsObj: {[key: string]: object} = {}
     commnts.forEach((doc) => {
@@ -158,8 +200,23 @@ async function manageUserRemovedLikedComment(user: string, cmmtId: string){
 }
 
 async function getFilters(){
+    cache = getLocalCache();
+    if (cache.filters) {
+        return cache.filters
+    }
     const filterObj = await getDoc(doc(db, "posts", "filters"));
-    return filterObj.data()
+    const data = filterObj.data()
+    cache.filters = data as filterType
+    setLocalCache()
+    return data
+}
+
+function getLocalCache() {
+    return localStorage.getItem("cache") ? JSON.parse(localStorage.getItem("cache") as string) : {};
+}
+
+function setLocalCache() {
+    localStorage.setItem("cache", JSON.stringify(cache))
 }
 
 export { 

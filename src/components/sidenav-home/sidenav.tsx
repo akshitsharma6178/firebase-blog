@@ -36,7 +36,7 @@ export function Sidenav( props: sidenavPropStruct) {
                 <span className='menu-title'>Home</span>
             </div>
             <span className='heading'>RECENT</span>
-            <div>
+            <div className='sidenav-recent'>
                 {recentPages.length > 0 ? recentPages.map((page, index) => {
                     return (
                         <div key={index} className='menu-tile'>

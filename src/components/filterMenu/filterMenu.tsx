@@ -22,7 +22,7 @@ interface filterPropStructure {
 export function FilterMenu(props: filterPropStructure) {
 
     const [filters, setFilters] = useState([])
-    const [validLoad, setValidLoad] = useState(false)
+    // const [validLoad, setValidLoad] = useState(false)
     const [isSelected, setisSelected] = useState<string[]>([])
 
     useEffect(() => {
@@ -36,11 +36,7 @@ export function FilterMenu(props: filterPropStructure) {
             }
         } 
         fetchFilters();
-    },[filters, validLoad])
-
-    const setLoad = () => {
-        setValidLoad(!validLoad);
-    }
+    },[])
 
     function isFilterSelected(filterName: string) {
         return isSelected.includes(filterName)
@@ -69,7 +65,6 @@ export function FilterMenu(props: filterPropStructure) {
         const arr: string[] = []
         setisSelected(arr)
         props.setPosts? props.setPosts({}) : null;
-        setLoad()
     }
     return (
         <div className={`${props.className}`}>
@@ -81,7 +76,7 @@ export function FilterMenu(props: filterPropStructure) {
                         className={`chips ${isFilterSelected(filter) ? "selected-chip": 'not-selected-chip'}`} 
                         label={`${filter}`} 
                         onClick={()=>handleClick(filter)} 
-                        onDelete={isFilterSelected(filter) ? handleDelete : undefined}
+                        onDelete={isFilterSelected(filter) ? () => handleDelete() : undefined}
                         />
                     })
                 }

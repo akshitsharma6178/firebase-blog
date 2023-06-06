@@ -59,3 +59,40 @@
     margin-bottom: 0rem;
     background-color: #343536;
 }
+
+.sidenav-recent{
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    padding: 10px;
+}
+
+.sidenav-recent:hover{
+    overflow-y: auto;
+}
+
+.sidenav-recent::-webkit-scrollbar{
+    width: 1px;
+    color: #232324;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 1rem;
+    
+}
+.sidenav-recent::-webkit-scrollbar:hover{
+    opacity: 1;
+    
+}
+
+.sidenav-recent::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+.sidenav-recent::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+.sidenav-recent::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+  
+  

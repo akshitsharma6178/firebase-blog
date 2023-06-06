@@ -33,23 +33,26 @@ export function Home() {
       const fetchPosts = async() => {
           try {
               const data = await getHomePageObj();
-              setPosts(data as MyType);
+              const sortedArray = Object.entries(data? data : {})
+              .sort(([, a], [, b]) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .map(([key, value]) => ({ [key]: value }));
+              const sortedObject = Object.assign({}, ...sortedArray);
+              setPosts(sortedObject as MyType);
           }
           catch(e) {
             console.error("Error fetching data:", e);
           }
       } 
+      const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        setUser(currentUser);
+      });
+
       fetchPosts();
-    },[validLoad]);
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-          setUser(currentUser);
-        });
-    
-        return () => {
-          unsubscribe();
-        };
-      }, [user]); 
+  
+      return () => {
+        unsubscribe();
+      };
+    },[validLoad, user]);
 
     const setLoad = () => {
         setValidLoad(!validLoad);
@@ -65,7 +68,7 @@ export function Home() {
         />
             {
                 auth.currentUser || user?
-                <div className="grid-item new-post">
+                <div className="new-post-grid-item grid-item new-post">
                     <textarea onClick={() => navigate('new')} placeholder="Create Post" className="newpost-input"></textarea>
                 </div> :
                 <></>
