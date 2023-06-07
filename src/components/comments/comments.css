@@ -1,0 +1,18 @@
+  .footer svg {
+    fill: #7C7E7F;
+    font-size: 1.25rem;
+  }
+
+  .footer .liked svg{
+    fill: #FF4500;
+  }
+
+  .footer .disliked svg{
+    fill: #7193FF;
+  }
+  .footer :nth-child(1):hover svg{
+    fill: #FF4500;
+  }
+  .footer :nth-child(3):hover svg{
+    fill: #7193FF;
+  }

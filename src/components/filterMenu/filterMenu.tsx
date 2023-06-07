@@ -8,7 +8,11 @@ interface MyType {
         title: string;
         content: string;
         user: string;
-        category: string
+        category: string;
+        createdAt: string;
+        likedByMe?: boolean;
+        dislikedByMe?: boolean;
+        likeNum: number
     }
 }
 
@@ -22,7 +26,6 @@ interface filterPropStructure {
 export function FilterMenu(props: filterPropStructure) {
 
     const [filters, setFilters] = useState([])
-    // const [validLoad, setValidLoad] = useState(false)
     const [isSelected, setisSelected] = useState<string[]>([])
 
     useEffect(() => {

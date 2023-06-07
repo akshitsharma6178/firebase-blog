@@ -12,7 +12,11 @@ interface MyType {
         title: string;
         content: string;
         user: string;
-        category: string
+        category: string;
+        createdAt: string;
+        likedByMe?: boolean;
+        dislikedByMe?: boolean;
+        likeNum: number
     }
 }
 
@@ -42,30 +46,31 @@ export function Home() {
           catch(e) {
             console.error("Error fetching data:", e);
           }
-      } 
+        } 
+      fetchPosts();
       const unsubscribe = auth.onAuthStateChanged((currentUser) => {
         setUser(currentUser);
       });
-
-      fetchPosts();
-  
       return () => {
         unsubscribe();
       };
     },[validLoad, user]);
 
     const setLoad = () => {
+      console.log(filteredPosts)
         setValidLoad(!validLoad);
     }
 
     return (
         <>
         <div className="main-body">
-        <FilterMenu 
-        className="post fliter-grid-item"
-        posts={posts}
-        setPosts={setFilteredPosts}
-        />
+        <div className="post fliter-grid-item">
+          <span className="filter-menu-span">Filter by Category</span>
+          <FilterMenu
+          posts={posts}
+          setPosts={setFilteredPosts}
+          />
+        </div>
             {
                 auth.currentUser || user?
                 <div className="new-post-grid-item grid-item new-post">
@@ -81,6 +86,8 @@ export function Home() {
                       keyId={post}
                       postObj={filteredPosts[post]}
                       className="grid-item"
+                      filtered={true}
+                      setFilteredPosts={setFilteredPosts}
                     />
                   ))
             ) :

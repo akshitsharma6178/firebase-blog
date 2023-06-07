@@ -20,6 +20,7 @@ export function NewPost() {
             user: auth.currentUser?.displayName,
             category: category,
             createdAt: new Date().toISOString().slice(0, 19),
+            likeNum: 0
         }}
         addPost(newPost)
         navigate('/');
@@ -63,7 +64,13 @@ export function NewPost() {
         <div className="main-new-post main-post main-body"> 
             <h1>Create a Post </h1>
             <div className="create-post-box">
-                <textarea placeholder="Title" className="newpost-input" value = {title} onChange={e => { setTitle(e.target.value)}}/><br />
+            <input
+                type="text"
+                placeholder="Title"
+                className="newpost-input"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+            />
                 <textarea placeholder="Text (optional)" className="newpost-input newtext-area" value = {content} onChange={e=> {setContent(e.target.value)} }/><br />
                 <div className="category">
                     <span>Choose a Category</span>

@@ -26,3 +26,9 @@
     border-radius: 0.25rem;
     border: solid 1px #343536;
 }
+
+.filter-menu-span{
+    font-weight: 700;
+    color: #818384;
+    font-size: 1rem;
+}

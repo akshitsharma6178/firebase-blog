@@ -21,6 +21,8 @@ interface commntStructure {
     [key: string]: {
         message: string,
         likeNum: number,
+        likedByMe?: boolean,
+        dislikedByMe?: boolean,
         createdAt: string,
         owner: string,
         parent: string
@@ -99,10 +101,12 @@ export function IndividualPost() {
                 id={cmmt}
                 message={cmmtData[cmmt].message}
                 user={cmmtData[cmmt].owner}
-                likeCount={cmmtData[cmmt].likeNum}
-                likedByMe={false}
+                likeNum={cmmtData[cmmt].likeNum}
+                likedByMe={cmmtData[cmmt].likedByMe}
+                dislikedByMe={cmmtData[cmmt].dislikedByMe}
                 createdAt={cmmtData[cmmt].createdAt}
                 setLoad={setLoad}
+                parent={cmmtData[cmmt].parent}
             /> }) : null
             }
         </section>

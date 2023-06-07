@@ -1,11 +1,13 @@
 import { IconBtn } from "../Icons/IconBtn"
-import { FaEdit, FaHeart, FaRegHeart, FaReply, FaTrash } from "react-icons/fa"
+import { FaEdit, FaReply, FaTrash } from "react-icons/fa"
 import { CommentList } from "../commentList/commentList"
 import { useEffect, useState } from "react"
 import { CommentForm } from "../commentForm/commentForm"
-import { auth, deleteComment, getComments, postNewComment, updateComment, updateLikeCount } from "../../services/firebase"
+import { auth, deleteComment, getComments, getTimeDifference, handleCommentLike, postNewComment, updateComment } from "../../services/firebase"
 import { v4 as uuidv4} from 'uuid';
 import { User } from "firebase/auth"
+import { TiArrowUpThick, TiArrowUpOutline, TiArrowDownThick, TiArrowDownOutline } from "react-icons/ti"
+import './comments.css'
 
 // const dateFormatter = new Intl.DateTimeFormat(undefined, {
 //   dateStyle: "medium",
@@ -17,8 +19,10 @@ interface cmmtProp {
   message?: string,
   user: string,
   createdAt: string,
-  likeCount: number,
-  likedByMe: boolean,
+  likeNum: number,
+  likedByMe: boolean | undefined,
+  dislikedByMe: boolean | undefined,
+  parent: string
   setLoad: () => void
 }
 
@@ -61,30 +65,6 @@ export function Comment(props: cmmtProp) {
     setIsReplying(false)
   }
 
-  function getTimeDifference(){
-    const createdAtDateUTC = new Date(props.createdAt)
-    const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
-    const createdAtLocal = new Date(createdAtDateUTC.getTime() - timezoneOffset)
-    const timeDifference = Date.now() - createdAtLocal.getTime();
-    // Define the time intervals for formatting
-    const minute = 60 * 1000; // 1 minute = 60 seconds * 1000 milliseconds
-    const hour = 60 * minute;
-    const day = 24 * hour;
-
-    // Determine the appropriate format based on the time difference
-    let formattedTime;
-    if (timeDifference < minute) {
-      formattedTime = `${Math.floor(timeDifference / 1000)} seconds ago`;
-    } else if (timeDifference < hour) {
-      formattedTime = `${Math.floor(timeDifference / minute)} minutes ago`;
-    } else if (timeDifference < day) {
-      formattedTime = `${Math.floor(timeDifference / hour)} hours ago`;
-    } else {
-      formattedTime = `${Math.floor(timeDifference / day)} days ago`;
-    }
-    return formattedTime
-  }
-
   function onCommentReply(message: string) {
     return postNewComment(uuidv4(), message, props.id).then(props.setLoad)
   }
@@ -97,8 +77,12 @@ export function Comment(props: cmmtProp) {
     return deleteComment(props.id).then(props.setLoad)
   }
 
-  function onToggleCommentLike() {
-    return updateLikeCount(props.id, props.likeCount+1).then(props.setLoad)
+  // function onToggleCommentLike() {
+  //   return updateLikeCount(props.id, props.likeCount+1).then(props.setLoad)
+  // }
+    function handleLike(status: boolean){
+      handleCommentLike(props.parent, props.id, status)
+      props.setLoad();
   }
   return (
     <>
@@ -107,7 +91,7 @@ export function Comment(props: cmmtProp) {
           <span className="name">{props.user}</span>
           <span className="date">
             {/* {dateFormatter.format(Date.parse(props.createdAt))} */}
-            {getTimeDifference()}
+            {getTimeDifference(props.createdAt)}
           </span>
         </div>
         {isEditing ? (
@@ -122,13 +106,17 @@ export function Comment(props: cmmtProp) {
           <div className="message">{props.message}</div>
         )}
         <div className="footer">
-          <IconBtn
-            onClick={onToggleCommentLike}
-            im={props.likedByMe ? FaHeart : FaRegHeart}
-            aria-label={props.likedByMe ? "Unlike" : "Like"}
-          >
-            {props.likeCount}
-          </IconBtn>
+          <IconBtn 
+            im={props.likedByMe? TiArrowUpThick : TiArrowUpOutline}
+            onClick={() => handleLike(true)}
+            color={props.likedByMe? 'liked': ''}
+          />
+          <span className={`${props.likedByMe ? 'liked-span' : ''} ${props.dislikedByMe? 'disliked-span' : ''}`}>{props.likeNum}</span>
+          <IconBtn 
+              im={props.dislikedByMe? TiArrowDownThick : TiArrowDownOutline}
+              onClick={() => handleLike(false)}
+              color={props.dislikedByMe? 'disliked': ''}
+          />
           <IconBtn
             onClick={() => setIsReplying(prev => !prev)}
             isactive={isReplying? 1 : 0}

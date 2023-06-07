@@ -4,7 +4,7 @@
 .post{
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: .5rem;
@@ -110,4 +110,61 @@
     color: black;
     font-weight: bold;
     cursor: pointer;
+  }
+
+  .title-div{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+  }
+
+  .posted-by-span{
+    padding: 0;
+    font-size: x-small;
+    color: #7D7E7F;
+    margin-bottom: -1rem;
+  }
+
+  .post-sidenav{
+    display: flex;
+    flex-direction: column;
+    background: #161617;
+    height: calc(100% + 2rem);
+    padding-top: 2rem !important;
+    width: 3rem;
+    margin-top: -1rem;
+    margin-left: -0.5rem;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+    color: #D2D5D7;
+    padding: 0.3rem;
+    flex-wrap: wrap;
+    align-content: center;
+  }
+
+  .post-sidenav svg {
+    fill: #7C7E7F;
+    font-size: 1.25rem;
+  }
+
+  .post-sidenav .liked svg{
+    fill: #FF4500;
+  }
+
+  .post-sidenav .disliked svg{
+    fill: #7193FF;
+  }
+  .post-sidenav :nth-child(1):hover svg{
+    fill: #FF4500;
+  }
+  .post-sidenav :nth-child(3):hover svg{
+    fill: #7193FF;
+  }
+  .liked-span{
+    color: #FF4500;
+  }
+  .disliked-span{
+    color: #7193FF;
   }
