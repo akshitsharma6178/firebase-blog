@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc, deleteField, setDoc, deleteDoc, getDocs, collection, query, where, orderBy, arrayRemove, arrayUnion, FieldValue} from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -134,6 +134,7 @@ async function addPost(postObj: {[key: string]: object}){
         await updateDoc(docRefForAllPosts, postObj);
         await setDoc(docRefForPostData, postObj[key])
         delete cache.homePageObj
+        setLocalCache()
     }
     catch (e) {
         console.error("Error adding document: ", e);
@@ -144,21 +145,18 @@ async function registerUserWithEmailAndPassword(name: string,email: string, pass
         await createUserWithEmailAndPassword(auth, email, password);
         auth.currentUser? await updateProfile(auth.currentUser, {
             displayName: name}): null
-        // await auth.currentUser?.getIdToken().then((idToken) => {
-        //     localStorage.setItem('authToken', idToken)
-        // })
+        localStorage.clear()
 }
 
 async function logInwithGoogle(){
     signInWithPopup(auth, provider)
+    localStorage.clear()
 }
 
 async function logInWithEmailAndPassword(email: string, password: string){
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
         const user = userCredential.user;
-        // user.getIdToken().then((idToken)=> {
-        //     localStorage.setItem('authToken', idToken)
-        // })
+        localStorage.clear()
         return user;
     })
     .catch((e) => {
@@ -166,12 +164,9 @@ async function logInWithEmailAndPassword(email: string, password: string){
     })
 } 
 
-async function logInWithToken(token: string){
-    signInWithCustomToken(auth, token)
-}
-
 function logout(){
     signOut(auth).then(() => {
+        localStorage.clear()
         return
     }).catch((e) => {
         console.error("Cannot SignOut", e.message)
@@ -207,10 +202,24 @@ async function postNewComment(key: string, message: string, parentId: string){
         createdAt: new Date().toISOString().slice(0, 19),
         likeNum: 0,
         }
+    if(cache.cmmntObj) {
+        cache.cmmntObj[parentId][key] = cmmtObj as {
+            message: string,
+            likeNum: number,
+            likedByMe?: boolean,
+            dislikedByMe?: boolean,
+            createdAt: string,
+            owner: string,
+            parent: string
+        };
+    }
+    setLocalCache()
     await setDoc(commntRef, cmmtObj);
 }
 
 async function updateComment(key: string, message: string){
+    delete cache.cmmntObj
+    setLocalCache()
     const commntRef = doc(db, 'comments', key);
     await updateDoc(commntRef, {
         message: message
@@ -218,13 +227,20 @@ async function updateComment(key: string, message: string){
 }
 
 async function deleteComment(key: string){
+    delete cache.cmmntObj
+    setLocalCache()
     await deleteDoc(doc(db,"comments", key))
+
 }
 
 async function getComments(key: string){
     getLocalCache()
     if(cache.cmmntObj && cache.cmmntObj[key]){
-        return cache.cmmntObj[key]
+        const sortedArray = Object.entries(cache.cmmntObj[key]? cache.cmmntObj[key] : {})
+        .sort(([, a], [, b]) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .map(([key, value]) => ({ [key]: value }));
+        const sortedObject = Object.assign({}, ...sortedArray);
+        return sortedObject
     }
     const commntRef = collection(db, 'comments');
     const commntQuery = query(commntRef, where("parent","==",key), orderBy("createdAt", "desc"))
@@ -251,36 +267,6 @@ async function getComments(key: string){
     cache.cmmntObj[key] = commntsObj
     setLocalCache()
     return commntsObj
-}
-
-async function updateLikeCount(key: string, likeCount: number){
-    const commntRef = doc(db, 'comments', key)
-    await updateDoc(commntRef,{
-        likeNum: likeCount
-    })
-}
-
-async function toggleLike(key: string, user: string, currentValue: boolean){
-    const likeRef = doc(db, 'commentLike', key)
-    await updateDoc(likeRef,{
-        [user]: !currentValue
-    })
-
-    
-}
-
-async function manageUserLikedComment(user: string, cmmtId: string){
-    const userRef = doc(db, 'comments', 'users')
-    await updateDoc(userRef, {
-        [user]: arrayUnion(cmmtId)
-    })
-}
-
-async function manageUserRemovedLikedComment(user: string, cmmtId: string){
-    const userRef = doc(db, 'comments', 'users')
-    await updateDoc(userRef, {
-        [user]: arrayRemove(cmmtId)
-    })
 }
 
 async function getFilters(){
@@ -450,11 +436,6 @@ export {
     getComments,
     updateComment,
     deleteComment,
-    updateLikeCount,
-    toggleLike,
-    manageUserLikedComment,
-    manageUserRemovedLikedComment,
-    logInWithToken,
     logInwithGoogle,
     auth,
     getFilters,

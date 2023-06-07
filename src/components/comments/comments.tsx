@@ -110,12 +110,14 @@ export function Comment(props: cmmtProp) {
             im={props.likedByMe? TiArrowUpThick : TiArrowUpOutline}
             onClick={() => handleLike(true)}
             color={props.likedByMe? 'liked': ''}
+            disabled = {!auth.currentUser ? true : false} 
           />
           <span className={`${props.likedByMe ? 'liked-span' : ''} ${props.dislikedByMe? 'disliked-span' : ''}`}>{props.likeNum}</span>
           <IconBtn 
               im={props.dislikedByMe? TiArrowDownThick : TiArrowDownOutline}
               onClick={() => handleLike(false)}
               color={props.dislikedByMe? 'disliked': ''}
+              disabled = {!auth.currentUser ? true : false} 
           />
           <IconBtn
             onClick={() => setIsReplying(prev => !prev)}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./homePostView.css"
 import { useNavigate } from "react-router-dom";
 import { Chip } from "@mui/material";
-import { getTimeDifference, handlePostLike , cache } from "../../services/firebase";
+import { getTimeDifference, handlePostLike , cache, auth } from "../../services/firebase";
 import { IconBtn } from "../Icons/IconBtn";
 import { TiArrowDownOutline, TiArrowDownThick, TiArrowUpOutline, TiArrowUpThick } from "react-icons/ti"
 
@@ -89,12 +89,14 @@ export function HomePost(props: HomePostProps){
                     im={props.postObj.likedByMe? TiArrowUpThick : TiArrowUpOutline}
                     onClick={() => handleLike(true)}
                     color={props.postObj.likedByMe? 'liked': ''}
+                    disabled = {!auth.currentUser ? true : false} 
                 />
                 <span className={`${props.postObj.likedByMe ? 'liked-span' : ''} ${props.postObj.dislikedByMe? 'disliked-span' : ''}`}>{props.postObj.likeNum}</span>
                 <IconBtn 
                     im={props.postObj.dislikedByMe? TiArrowDownThick : TiArrowDownOutline}
                     onClick={() => handleLike(false)}
                     color={props.postObj.dislikedByMe? 'disliked': ''}
+                    disabled = {!auth.currentUser ? true : false} 
                 />
             </div>
             <div className="post-content">
