@@ -1,5 +1,5 @@
 import { IconBtn } from "../Icons/IconBtn"
-import { FaEdit, FaReply, FaTrash } from "react-icons/fa"
+import { FaEdit, FaCommentAlt , FaTrash } from "react-icons/fa"
 import { CommentList } from "../commentList/commentList"
 import { useEffect, useState } from "react"
 import { CommentForm } from "../commentForm/commentForm"
@@ -8,6 +8,8 @@ import { v4 as uuidv4} from 'uuid';
 import { User } from "firebase/auth"
 import { TiArrowUpThick, TiArrowUpOutline, TiArrowDownThick, TiArrowDownOutline } from "react-icons/ti"
 import './comments.css'
+import { OptionsMenu, optionsStructure } from "../menu/menu"
+import { LoginDialog } from "../loginDialog/loginDialog"
 
 // const dateFormatter = new Intl.DateTimeFormat(undefined, {
 //   dateStyle: "medium",
@@ -42,6 +44,19 @@ export function Comment(props: cmmtProp) {
   const [isEditing, setIsEditing] = useState(false)
   const [childComments, setChildComments] = useState<childCommntStructure>({});
   const [user, setUser] = useState<User | null>(null); 
+  const [isLogin, setisLogin] = useState(false);
+  const optionMenuObject : optionsStructure = {
+    'edit': {
+      displayName: 'Edit',
+      onClick: () => setIsEditing(prev => !prev),
+      im: FaEdit
+    },
+    'delete': {
+      displayName: 'Delete',
+      onClick: onCommentDelete,
+      im: FaTrash
+    }
+  }
   useEffect(() => {
       const unsubscribe = auth.onAuthStateChanged((currentUser) => {
         setUser(currentUser);
@@ -101,6 +116,8 @@ export function Comment(props: cmmtProp) {
             onSubmit={onCommentUpdate}
             setLoad={props.setLoad}
             state={state}
+            isEditing={true}
+            setIsEditing={setIsEditing}
           />
         ) : (
           <div className="message">{props.message}</div>
@@ -119,16 +136,14 @@ export function Comment(props: cmmtProp) {
               color={props.dislikedByMe? 'disliked': ''}
               disabled = {!auth.currentUser ? true : false} 
           />
-          <IconBtn
-            onClick={() => setIsReplying(prev => !prev)}
-            isactive={isReplying? 1 : 0}
-            im={FaReply}
-            aria-label={isReplying ? "Cancel Reply" : "Reply"}
-            disabled = {!auth.currentUser ? true : false} 
-          />
+          <div className="footer-icon-label-div" onClick={() => {auth.currentUser ? setIsReplying(prev => !prev) : setisLogin(true)}}>
+            <FaCommentAlt />
+            <span className="comment-span">Reply</span>
+          </div>
+          {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>}
           {auth.currentUser?.displayName === props.user && (
             <>
-              <IconBtn
+              {/* <IconBtn
                 onClick={() => setIsEditing(prev => !prev)}
                 isactive={isEditing? 1 : 0}
                 im={FaEdit}
@@ -139,6 +154,9 @@ export function Comment(props: cmmtProp) {
                 im={FaTrash}
                 aria-label="Delete"
                 color="danger"
+              /> */}
+              <OptionsMenu 
+                options={optionMenuObject}
               />
             </>
           )}
@@ -154,6 +172,8 @@ export function Comment(props: cmmtProp) {
             onSubmit={onCommentReply}
             setLoad={props.setLoad}
             state={state}
+            isReplying={true}
+            setIsEditing={setIsReplying}
           />
         </div>
       )}

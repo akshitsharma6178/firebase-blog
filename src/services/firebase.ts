@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc, deleteField, setDoc, deleteDoc, getDocs, collection, query, where, orderBy, arrayRemove, arrayUnion, FieldValue} from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { getStorage } from "firebase/storage"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -41,17 +42,18 @@ interface cacheStructure {
     cmmntObj? : commntCacheStructure
 }
 
-interface homePageObjStructure  {
-        [key : string ] : {
-            title: string;
-            content: string;
-            user: string;
-            category: string;
-            createdAt: string;
-            likedByMe?: boolean;
-            dislikedByMe?: boolean
-            likeNum: number
-        }
+export interface homePageObjStructure  {
+    [key : string ] : {
+        title: string;
+        content: string;
+        user: string;
+        category: string;
+        createdAt: string;
+        likedByMe?: boolean;
+        dislikedByMe?: boolean
+        likeNum: number
+        downloadURL?: string
+    }
 }
 
 interface commntStructure {
@@ -85,6 +87,7 @@ interface commntCacheStructure {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
+const storage = getStorage(app);
 // const batch = writeBatch(db);
 const provider = new GoogleAuthProvider();
 let cache : cacheStructure = {}
@@ -128,13 +131,14 @@ async function getDislikeStatus(key: string, type: string){
 
 async function addPost(postObj: {[key: string]: object}){
     try {
+        delete cache.homePageObj
+        setLocalCache()
         const key = Object.keys(postObj)[0]
         const docRefForAllPosts = doc(db, "posts", "allPosts");
         const docRefForPostData = doc(db, "postData", key);
         await updateDoc(docRefForAllPosts, postObj);
         await setDoc(docRefForPostData, postObj[key])
-        delete cache.homePageObj
-        setLocalCache()
+
     }
     catch (e) {
         console.error("Error adding document: ", e);
@@ -424,6 +428,7 @@ async function handlePostLike(key: string, status: boolean) {
     }
 }
 
+
 export { 
     getHomePageObj, 
     addPost, 
@@ -442,5 +447,6 @@ export {
     getTimeDifference,
     handleCommentLike,
     handlePostLike,
-    cache
+    cache,
+    storage
 }

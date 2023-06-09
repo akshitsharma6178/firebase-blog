@@ -57,7 +57,6 @@ export function Home() {
     },[validLoad, user]);
 
     const setLoad = () => {
-      console.log(filteredPosts)
         setValidLoad(!validLoad);
     }
 

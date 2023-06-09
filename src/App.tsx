@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom'
 import { NewPost } from './components/newPost/newPost.tsx'
 import { IndividualPost } from './components/individualPost/individualPost.tsx'
 import { Sidenav } from './components/sidenav-home/sidenav.tsx'
+import { ThemeProvider, createTheme } from '@mui/material'
 // import { auth, logInWithToken } from './services/firebase.ts'
 // import { useEffect, useState } from 'react'
 // import { User } from 'firebase/auth'
@@ -21,20 +22,28 @@ function App() {
   //     setUser(user)
   //   }
   //   checkAuthState();
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
   // })
   return (
     <>
-    <div className='main-container'>
-      <Head 
-      className='header-grid'/>
-      <Sidenav 
-      className='sidenav-grid'/>
-      <Routes>
-        <Route path="/" element={ <Home/>} />
-        <Route path="/new" element={ <NewPost/>} />
-        <Route path="/post/:postId" element={ <IndividualPost/>} />
-      </Routes>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <div className='main-container'>
+        <Head 
+        className='header-grid'/>
+        <Sidenav 
+        className='sidenav-grid'/>
+        <Routes>
+          <Route path="/" element={ <Home/>} />
+          <Route path="/new" element={ <NewPost/>} />
+          <Route path="/post/:postId" element={ <IndividualPost/>} />
+        </Routes>
+      </div>
+    </ThemeProvider>
+
     </>
   )
 }

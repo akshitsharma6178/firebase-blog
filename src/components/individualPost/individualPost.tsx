@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { getComments, getPostData, postNewComment } from "../../services/firebase";
+import { cache, getComments, getPostData, getTimeDifference, postNewComment } from "../../services/firebase";
 import { useEffect, useState } from "react";
 import { CommentForm } from "../commentForm/commentForm";
 import { v4 as uuidv4} from 'uuid';
@@ -9,12 +9,16 @@ import { auth } from "../../services/firebase";
 import { User } from "firebase/auth";
 import { FaPlus } from "react-icons/fa";
 import { LoginDialog } from "../loginDialog/loginDialog";
+import { SidenavUpDownVote } from "../sidenav-upvote-downvote/sidenav";
+import { Chip } from "@mui/material";
 
 interface postObjStructure {
     title: string,
     content: string,
     user: string,
-    category: string
+    category: string,
+    createdAt: string,
+    downloadURL?: string
 }
 
 interface commntStructure {
@@ -29,10 +33,22 @@ interface commntStructure {
     }
 }
 
+interface postObj {
+        title: string;
+        content: string;
+        user: string;
+        category: string;
+        createdAt: string;
+        likedByMe?: boolean;
+        dislikedByMe?: boolean;
+        likeNum: number;
+        downloadURL?: string
+}
+
 export function IndividualPost() {
 
     const {postId} = useParams();
-    const [postData, setPostData] = useState<postObjStructure>({title: '', content: '', user: '', category: ''})
+    const [postData, setPostData] = useState<postObjStructure>({title: '', content: '', user: '', category: '', downloadURL: '', createdAt: ''})
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [cmmtData, setCmmtData] = useState<commntStructure>({})
@@ -40,6 +56,7 @@ export function IndividualPost() {
     const [validLoad, setValidLoad] = useState(false) 
     const [user, setUser] = useState<User | null>(null); 
     const [isLogin, setisLogin] = useState(false);
+    const [postObj, setPostObj] = useState<postObj>()
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
           setUser(currentUser);
@@ -59,6 +76,7 @@ export function IndividualPost() {
             const data = postId? await getComments(postId): ""
             if(data) { setCmmtData(data as commntStructure); setIsComments(true);}
         }
+        postId? setPostObj(cache.homePageObj?.[postId]) : null
         fetchData()
         fetchCmmt()
         setLoading(false)
@@ -76,40 +94,63 @@ export function IndividualPost() {
 
     return (
         <div className="main-body main-post">
-        <h1>{postData.title}</h1>
-        <article>{postData.content}</article>
-        {auth.currentUser || user? <h3 className="comments-title">Comment as {auth.currentUser?.displayName}</h3> : <></>}
-        <section className="comments-section">
-           { auth.currentUser || user?
-                <CommentForm
-                    loading={loading}
-                    error={error}
-                    initialValue=""
-                    autoFocus={false}
-                    onSubmit={postCommentFunction}
-                    setLoad = {setLoad}
-                /> :
-                <>
-                    <button className="btn cmmt-btn" onClick={() => {setisLogin(true)}}><FaPlus /> Add a Comment</button>
-                    {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>}
-                </>
-            }
-            <div className="decorator"></div>
-            {  JSON.stringify(cmmtData) !== '{}'? Object.keys(cmmtData).map(cmmt => {
-                return <Comment 
-                key={cmmt}
-                id={cmmt}
-                message={cmmtData[cmmt].message}
-                user={cmmtData[cmmt].owner}
-                likeNum={cmmtData[cmmt].likeNum}
-                likedByMe={cmmtData[cmmt].likedByMe}
-                dislikedByMe={cmmtData[cmmt].dislikedByMe}
-                createdAt={cmmtData[cmmt].createdAt}
+            <SidenavUpDownVote 
+                keyId={postId ? postId : ''}
+                postObj={postObj? postObj : {} as postObj}
+                className="individual-post"
                 setLoad={setLoad}
-                parent={cmmtData[cmmt].parent}
-            /> }) : null
-            }
-        </section>
+            />
+            <div className="post-content individual-post">
+            <span className="posted-by-span">Posted by {postData.user} {getTimeDifference(postData.createdAt)}</span>
+            <div className="title-div">
+                    <Chip
+                    className={`chips`} 
+                    label={`${postData.category}`} 
+                    // onClick={()=>handleClick()} 
+                    // onDelete={isFilterSelected(filter) ? () => handleDelete() : undefined}
+                    /> 
+                    <h2 className="title">{postData.title}</h2>
+                </div>
+                {postData.downloadURL ? 
+                        <div className="post-view-image-container">
+                            <img loading="lazy" className="post-view-image" src={postData.downloadURL} alt="" />
+                        </div>:
+                        <></>
+                }
+                <article>{postData.content}</article>
+                {auth.currentUser || user? <h5 className="comments-title">Comment as {auth.currentUser?.displayName}</h5> : <></>}
+                <section className="comments-section">
+                { auth.currentUser || user?
+                        <CommentForm
+                            loading={loading}
+                            error={error}
+                            initialValue=""
+                            autoFocus={false}
+                            onSubmit={postCommentFunction}
+                            setLoad = {setLoad}
+                        /> :
+                        <>
+                            <button className="btn cmmt-btn" onClick={() => {setisLogin(true)}}><FaPlus /> Add a Comment</button>
+                            {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>}
+                        </>
+                    }
+                    <div className="decorator"></div>
+                    {  JSON.stringify(cmmtData) !== '{}'? Object.keys(cmmtData).map(cmmt => {
+                        return <Comment 
+                        key={cmmt}
+                        id={cmmt}
+                        message={cmmtData[cmmt].message}
+                        user={cmmtData[cmmt].owner}
+                        likeNum={cmmtData[cmmt].likeNum}
+                        likedByMe={cmmtData[cmmt].likedByMe}
+                        dislikedByMe={cmmtData[cmmt].dislikedByMe}
+                        createdAt={cmmtData[cmmt].createdAt}
+                        setLoad={setLoad}
+                        parent={cmmtData[cmmt].parent}
+                    /> }) : null
+                    }
+                </section>
+            </div>
         </div>
     )
 }

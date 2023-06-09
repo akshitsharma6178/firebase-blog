@@ -16,3 +16,8 @@
   .footer :nth-child(3):hover svg{
     fill: #7193FF;
   }
+ .comment-span{
+    color: #67696A;
+    font-size: 0.8em;
+    font-weight: 700;
+ }

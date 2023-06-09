@@ -1,10 +1,11 @@
 import { ChangeEvent, useState } from "react";
-import { addPost } from "../../services/firebase";
+import { addPost, storage } from "../../services/firebase";
 import { v4 as uuidv4} from 'uuid';
 import { useNavigate} from 'react-router-dom';
 import "./newPost.css"
 import { auth } from "../../services/firebase";
 import { FilterMenu } from "../filterMenu/filterMenu";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export function NewPost() {
     const navigate = useNavigate();
@@ -12,52 +13,59 @@ export function NewPost() {
     const [content, setContent] = useState("");
     const [category, setCategory] = useState("");
     const [previewURL, setPreviewURL] = useState('');
+    const [file, setFile] = useState<File>();
 
-    function setPostOnline(){
-        const newPost = {[uuidv4()]: {
-            title: title,
-            content: content,
-            user: auth.currentUser?.displayName,
-            category: category,
-            createdAt: new Date().toISOString().slice(0, 19),
-            likeNum: 0
-        }}
-        addPost(newPost)
-        navigate('/');
-        return ;
+    async function setPostOnline(){
+        if (file){
+            const imageRef = ref(storage, `${'images/' + file.name}`);
+
+            const uploadTask = uploadBytesResumable(imageRef, file)
+            uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            },
+            (error) => {
+                console.error(error);
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                const newPost = {[uuidv4()]: {
+                    title: title,
+                    content: content,
+                    user: auth.currentUser?.displayName,
+                    category: category,
+                    createdAt: new Date().toISOString().slice(0, 19),
+                    downloadURL: downloadURL,
+                    likeNum: 0
+                }}
+                    addPost(newPost)
+                    navigate('/');
+                    return ;
+                });
+            }
+            );
+        }
+        else{
+            const newPost = {[uuidv4()]: {
+                title: title,
+                content: content,
+                user: auth.currentUser?.displayName,
+                category: category,
+                createdAt: new Date().toISOString().slice(0, 19),
+                downloadURL: '',
+                likeNum: 0
+            }}
+            addPost(newPost)
+            navigate('/');
+            return ;
+        }
     }
-    const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
-    
         setPreviewURL(URL.createObjectURL(selectedFile));
-        // const storageRef = firebase.storage().ref();
-        // const imageRef = storageRef.child('images/' + imageFile.name);
-      
-        // // Upload the image file to Firebase Storage
-        // const uploadTask = imageRef.put(imageFile);
-      
-        // // Listen for state changes, errors, and completion of the upload
-        // uploadTask.on(
-        //   firebase.storage.TaskEvent.STATE_CHANGED,
-        //   (snapshot) => {
-        //     // Get the progress percentage
-        //     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //     console.log('Upload is ' + progress + '% done');
-        //   },
-        //   (error) => {
-        //     // Handle any errors during the upload
-        //     console.error(error);
-        //   },
-        //   () => {
-        //     // Upload completed successfully
-        //     // Get the download URL of the uploaded image
-        //     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        //       console.log('Image available at', downloadURL);
-        //       // Store the download URL in your state or perform further actions
-        //     });
-        //   }
-        // );
+        setFile(selectedFile)
       };
 
     return( 

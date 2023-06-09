@@ -61,21 +61,24 @@
   
   .comment-form-row {
     display: flex;
-    gap: .5rem;
+    flex-direction: column;
+    gap: 0;
   }
   
   .message-input {
     flex-grow: 1;
-    resize: none;
-    height: 70px;
-    border-radius: .5em;
-    padding: .5em;
+    resize: vertical;
+    height: 120px;
+    border-radius: 0.25em;
+    padding: 0.5em;
     font-size: inherit;
     font-family: inherit;
-    border: 2px solid white;
     background-color: #1A1A1B;
     color: white;
     line-height: 1.4;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
   }
   
   .message-input:focus {
@@ -260,6 +263,8 @@
     display: flex;
     gap: .5rem;
     margin-top: .5rem;
+    align-items: center;
+    flex-wrap: wrap;
   }
   
   .ml-3 {
@@ -301,7 +306,6 @@
     grid-template-columns: 200px 1fr 1fr 1fr 1fr;
     grid-template-rows: auto 1fr;
     height: 100vh;
-    /* overflow: hidden; */
   }
 
   .header-grid {
@@ -315,6 +319,101 @@
     grid-row: 2 / span 1;
     grid-column: 1 / span 1;
     overflow-y: auto;
+  }
+
+  .comment-form-btn{
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px;
+    background: #272729;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0.25em;
+    border-bottom-right-radius: 0.25em;
+    border: solid 1px #636364;
+    border-top: none;
+    gap: 1rem;
+  }
+
+  .comment-form-btn.active {
+    border: solid 1px #C8CBCD;
+    border-top: none;
+  }
+
+  .post-btn{
+    background-color: white;
+    color: black;
+    font-weight: 700;
+    font-size: 0.8rem;
+    /* width: fit-content; */
+  }
+
+  .post-btn[disabled]{
+    background-color: gainsboro;
+    color: gray;
+    font-weight: 600;
+    cursor: default;
+  }
+
+  .post-btn[disabled]:hover{
+    background-color: gainsboro;
+  }
+
+  .post-cncl-btn{
+    background-color: gainsboro;
+    color: black;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  .post-cncl-btn:hover{
+    background-color: #A7AAAB;
+  }
+
+  .post-btn:hover{
+    background-color: #C8CBCD;
+  }
+
+  .options-menu-tile{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: center;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+  }
+
+  .menu:hover{
+    background-color: #343536;
+  }
+  .divider {
+    color: #343536;
+  }
+  .menu-tile-text{
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.8rem;
+  }
+  .footer-icon-label-div{
+    display: flex;
+    gap: 0.5em;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 5px;
+  }
+
+  .footer-icon-label-div:hover{
+    background-color: #343536;
+    cursor: pointer;
   }
 
   ::-webkit-scrollbar {
