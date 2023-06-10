@@ -32,3 +32,9 @@
     color: #818384;
     font-size: 1rem;
 }
+
+.post-main{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

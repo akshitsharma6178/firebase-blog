@@ -101,7 +101,7 @@ export function HomePost(props: HomePostProps){
                     <></>
                 }
 
-                <p>{props.postObj.content}</p>
+                <p dangerouslySetInnerHTML={{__html : props.postObj.content}}></p>
             </div>
             {/* <button className="btn delete-btn" onClick={() => handleDelete(props.keyId)}>Delete</button> */}
         </div>

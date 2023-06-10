@@ -70,35 +70,35 @@ export function Home() {
           setPosts={setFilteredPosts}
           />
         </div>
-            {
-                auth.currentUser || user?
-                <div className="new-post-grid-item grid-item new-post">
-                    <textarea onClick={() => navigate('new')} placeholder="Create Post" className="newpost-input"></textarea>
-                </div> :
-                <></>
-            }
-        {  Object.keys(filteredPosts).length > 0 ? (
-                Object.keys(filteredPosts).map((post) => (
-                    <HomePost
-                      key={post}
-                      setLoad={setLoad}
-                      keyId={post}
-                      postObj={filteredPosts[post]}
-                      className="grid-item"
-                      filtered={true}
-                      setFilteredPosts={setFilteredPosts}
-                    />
-                  ))
-            ) :
-        JSON.stringify(posts) !== '{}' ? Object.keys(posts).map(post => {
-                return <HomePost 
-                key={post} 
-                setLoad={setLoad} 
-                keyId={post} 
-                postObj={posts[post]} 
-                className="grid-item"
-                /> }) : <p>No Posts</p>
+        <div className="grid-item post-main">
+        {
+          auth.currentUser || user?
+          <div className="new-post">
+              <textarea onClick={() => navigate('new')} placeholder="Create Post" className="newpost-input"></textarea>
+          </div> :
+          <></>
         }
+        {  Object.keys(filteredPosts).length > 0 ? (
+            Object.keys(filteredPosts).map((post) => (
+                <HomePost
+                  key={post}
+                  setLoad={setLoad}
+                  keyId={post}
+                  postObj={filteredPosts[post]}
+                  filtered={true}
+                  setFilteredPosts={setFilteredPosts}
+                />
+              ))
+        ) :
+            JSON.stringify(posts) !== '{}' ? Object.keys(posts).map(post => {
+                    return <HomePost 
+                    key={post} 
+                    setLoad={setLoad} 
+                    keyId={post} 
+                    postObj={posts[post]}
+                    /> }) : <p>No Posts</p>
+            }
+        </div>
         </div>
         </>
     )

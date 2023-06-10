@@ -26,17 +26,14 @@
     max-width: 65rem;
     margin: auto;
     width: 51.5rem;
-    grid-gap: 0.5rem;
+    grid-gap: 1rem;
     margin-top: 3rem;
     margin-bottom: 1rem;
     position: relative;
     grid-template-columns: repeat(3, 1fr);
     grid-column: 2/ span 4;
-    grid-row: 2 / span 1;
     box-sizing: border-box;
     padding: 2rem;
-    /* grid-template-rows: minmax(100px, max-content) repeat(auto-fill, 200px) 20%; */
-    grid-auto-rows: minmax(100px, min-content) auto;  
   }
 
   .expand-text{
@@ -409,6 +406,9 @@
     justify-content: flex-start;
     align-items: center;
     padding: 5px;
+  }
+  .toolbar-btn{
+    min-width: unset !important;
   }
 
   .footer-icon-label-div:hover{

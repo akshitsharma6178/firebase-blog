@@ -18,10 +18,12 @@
 }
 
 .main-new-post{
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     align-items: center;
     align-self: center;
+    background-color: #1A1A1B !important;
+    margin-bottom: auto !important;
 }
 
 .category{
@@ -37,3 +39,11 @@
     padding: 8px;
     border-radius: 4px;
   }
+.image-preview{
+    position: relative;
+    height: auto;
+    max-width: 100%;
+    width: 28rem;
+    margin-bottom: 0.5rem;
+    object-fit: scale-down;
+}

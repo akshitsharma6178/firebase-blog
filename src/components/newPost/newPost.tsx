@@ -6,6 +6,9 @@ import "./newPost.css"
 import { auth } from "../../services/firebase";
 import { FilterMenu } from "../filterMenu/filterMenu";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { TextEditor } from "../textEditor/textEditor";
+import 'draft-js/dist/Draft.css';
+
 
 export function NewPost() {
     const navigate = useNavigate();
@@ -68,8 +71,9 @@ export function NewPost() {
         setFile(selectedFile)
       };
 
-    return( 
-        <div className="main-new-post main-post main-body"> 
+    return(
+        <> 
+        <div className="main-new-post main-body"> 
             <h1>Create a Post </h1>
             <div className="create-post-box">
             <input
@@ -79,17 +83,20 @@ export function NewPost() {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
             />
-                <textarea placeholder="Text (optional)" className="newpost-input newtext-area" value = {content} onChange={e=> {setContent(e.target.value)} }/><br />
+                <TextEditor 
+                 setMethod={setContent}/>  
+                {/* <textarea placeholder="Text (optional)" className="newpost-input newtext-area" value = {content} onChange={e=> {setContent(e.target.value)} }/><br /> */}
                 <div className="category">
                     <span>Choose a Category</span>
                     <FilterMenu 
                     setCategory={setCategory}
                     />
                 </div>
-                <input type="file" className="image-input custom-input" onChange={handleImageUpload} accept="image/*" />
-                {previewURL && <img src={previewURL} alt="Preview" className="post-image" />}
+                <input type="file" className="custom-input" onChange={handleImageUpload} accept="image/*" />
+                {previewURL && <img src={previewURL} alt="Preview" className="image-preview" />}
                 <button className="postbtn lgn-btn" onClick={() => setPostOnline()}>Add</button>
             </div>
         </div>
+        </>
     )
 }

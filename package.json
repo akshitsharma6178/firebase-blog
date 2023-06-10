@@ -14,6 +14,8 @@
     "@emotion/styled": "^11.11.0",
     "@firebase/firestore": "^3.12.1",
     "@mui/material": "^5.13.3",
+    "draft-js": "^0.11.7",
+    "draft-js-export-html": "^1.4.1",
     "firebase": "^9.22.0",
     "firestore": "^1.1.6",
     "prismjs": "^1.29.0",
@@ -23,6 +25,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/draft-js": "^0.11.12",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/uuid": "^9.0.1",

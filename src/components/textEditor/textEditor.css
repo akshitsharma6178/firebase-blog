@@ -1,0 +1,69 @@
+
+
+  .editor-wrapper {
+    border: 1px solid #343536;
+    background: #1A1A1B;
+    height: 20rem !important;
+    width: 75%;
+    border-radius: 0.25em;
+  }
+
+  .editor-wrapper.active {
+    border: 1px solid white;
+  }
+  
+  .editor-container {
+    width: 100%;
+    border: 1px solid #1A1A1B;
+    border-top: none;
+    height: 250px;
+    padding: 1rem;
+  }
+  
+  .toolbar-grid {
+    background-color: #272729;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.2em;
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+  }
+  
+  .superFancyBlockquote {
+    color: #999;
+    background: #fff;
+    font-family: "Hoefler Text", Georgia, serif;
+    font-style: italic;
+    border-left: 2px solid #999;
+    padding-left: 10px;
+  }
+  
+  .codeBlock {
+    font-family: fira-code, monospace;
+    font-size: inherit;
+    background: #ffeff0;
+    font-style: italic;
+    word-wrap: normal;
+    word-wrap: break-word;
+    box-decoration-break: slice;
+    padding: 0.3rem 2rem;
+    border-radius: 0.2rem;
+  }
+  
+  .leftAlign {
+    text-align: left;
+  }
+  .rightAlign {
+    text-align: right;
+  }
+  .centerAlign {
+    text-align: center;
+  }
+  .justifyAlign {
+    text-align: justify;
+  }
+  

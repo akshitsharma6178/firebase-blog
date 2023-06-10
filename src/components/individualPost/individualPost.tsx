@@ -117,7 +117,7 @@ export function IndividualPost() {
                         </div>:
                         <></>
                 }
-                <article>{postData.content}</article>
+                <article dangerouslySetInnerHTML={{__html : postData.content}}></article>
                 {auth.currentUser || user? <h5 className="comments-title">Comment as {auth.currentUser?.displayName}</h5> : <></>}
                 <section className="comments-section">
                 { auth.currentUser || user?
