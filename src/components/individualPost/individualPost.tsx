@@ -11,6 +11,7 @@ import { FaPlus } from "react-icons/fa";
 import { LoginDialog } from "../loginDialog/loginDialog";
 import { SidenavUpDownVote } from "../sidenav-upvote-downvote/sidenav";
 import { Chip } from "@mui/material";
+import { TextEditor } from "../textEditor/textEditor";
 
 interface postObjStructure {
     title: string,
@@ -41,9 +42,9 @@ interface postObj {
         createdAt: string;
         likedByMe?: boolean;
         dislikedByMe?: boolean;
-        likeNum: number;
-        downloadURL?: string
+        likeNum: number
 }
+
 
 export function IndividualPost() {
 
@@ -111,13 +112,13 @@ export function IndividualPost() {
                     /> 
                     <h2 className="title">{postData.title}</h2>
                 </div>
-                {postData.downloadURL ? 
-                        <div className="post-view-image-container">
-                            <img loading="lazy" className="post-view-image" src={postData.downloadURL} alt="" />
-                        </div>:
-                        <></>
-                }
-                <article dangerouslySetInnerHTML={{__html : postData.content}}></article>
+                
+                <TextEditor 
+                    isViewOnly={true}
+                    editorStateData={ postData.content }
+                />
+                
+
                 {auth.currentUser || user? <h5 className="comments-title">Comment as {auth.currentUser?.displayName}</h5> : <></>}
                 <section className="comments-section">
                 { auth.currentUser || user?

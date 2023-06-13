@@ -3,6 +3,8 @@ import './sidenav.css'
 import { GrHomeRounded, GrBook } from 'react-icons/gr'
 import { useNavigate } from "react-router-dom";
 import { LoginDialog } from '../loginDialog/loginDialog';
+import { auth } from '../../services/firebase';
+import { User } from 'firebase/auth';
 
 type Page = {
     [key: string]: string;
@@ -17,6 +19,7 @@ export function Sidenav( props: sidenavPropStruct) {
     const initalRecentPages = localStorage.getItem('recentPages') ? JSON.parse(localStorage.getItem('recentPages') as string) :  [];
     const [recentPages, setRecentPages] = useState<Page[]>(initalRecentPages);
     const [isLogin, setisLogin] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         const handleLocalStorageChange = () => {
@@ -24,8 +27,13 @@ export function Sidenav( props: sidenavPropStruct) {
             setRecentPages(updatedRecentPages);
         }
         window.addEventListener('recentPagesUpdate', handleLocalStorageChange)
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            setUser(currentUser);
+          });
+      
         return ()=>{
             window.removeEventListener('recentPagesUpdate', handleLocalStorageChange)
+            unsubscribe()
         }
     })
     return (
@@ -48,8 +56,9 @@ export function Sidenav( props: sidenavPropStruct) {
                 }): <></>}
             </div>
             <div className='decorator sidenav-decorator'></div>
-            <button  className='sidenav-btn box lgn-btn' onClick={()=>setisLogin(true)}>Join</button>
-            {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>}
+            { !auth.currentUser || !user? <><button  className='sidenav-btn box lgn-btn' onClick={()=>setisLogin(true)}>Join</button>
+            {isLogin ? <LoginDialog setisLogin={setisLogin}/>: <></>
+             }</> : <></>}
         </div>
     )
 }

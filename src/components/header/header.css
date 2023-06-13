@@ -9,6 +9,7 @@
    flex-wrap: wrap;
    /* padding-right: 5%; */
    /* top: 0px; */
+   align-items: center;
    gap: 2rem;
    z-index: 5;
    position: fixed;

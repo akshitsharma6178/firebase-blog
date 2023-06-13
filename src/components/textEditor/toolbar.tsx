@@ -1,15 +1,19 @@
 import { Button } from '@mui/material';
-import { EditorState, RichUtils } from 'draft-js';
-import { ReactNode, MouseEvent } from 'react';
+import { AtomicBlockUtils, EditorState, RichUtils } from 'draft-js';
+import { ReactNode, MouseEvent, useRef } from 'react';
 import {
   FaBold,
   FaItalic,
-  FaUnderline,
   FaStrikethrough,
   FaTextWidth,
   FaListUl,
   FaListOl,
+  FaCode,
+  FaQuoteRight,
+  FaHeading,
+  FaImage,
 } from 'react-icons/fa';
+import { uploadImageToFirebase } from '../../services/firebase';
 
 interface Tool {
   label: string;
@@ -21,9 +25,11 @@ interface Tool {
 interface ToolbarProps {
   editorState: EditorState;
   setEditorState: (state: EditorState) => void;
+  // insertImage: (url: string) => void;
 }
 
-const Toolbar = ({ editorState, setEditorState }: ToolbarProps) => {
+const Toolbar = ({ editorState, setEditorState}: ToolbarProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const tools: Tool[] = [
     {
       label: "bold",
@@ -35,12 +41,6 @@ const Toolbar = ({ editorState, setEditorState }: ToolbarProps) => {
       label: "italic",
       style: "ITALIC",
       icon: <FaItalic/>,
-      method: "inline",
-    },
-    {
-      label: "underline",
-      style: "UNDERLINE",
-      icon: <FaUnderline />,
       method: "inline",
     },
     {
@@ -56,6 +56,12 @@ const Toolbar = ({ editorState, setEditorState }: ToolbarProps) => {
       method: "inline",
     },
     {
+      label: "Blockquote",
+      style: "blockQuote",
+      icon: <FaQuoteRight/>,
+      method: "block",
+    },
+    {
       label: "Unordered-List",
       style: "unordered-list-item",
       method: "block",
@@ -66,14 +72,62 @@ const Toolbar = ({ editorState, setEditorState }: ToolbarProps) => {
       style: "ordered-list-item",
       method: "block",
       icon: <FaListOl />,
+    },
+    {
+      label: "Code Block",
+      style: "CODEBLOCK",
+      icon: <FaCode />,
+      method: "inline",
+    },
+    { 
+      label: "Heading", 
+      style: "header-one", 
+      icon: <FaHeading/>, 
+      method: "block" 
+    },
+    {
+      label: "Insert Image",
+      style: "",
+      icon: <FaImage/>,
+      method: "image"
     }
 ];
 
 const applyStyle = (e: MouseEvent<HTMLButtonElement>, style: string, method: string) => {
   e.preventDefault();
-  method === 'block'
-    ? setEditorState(RichUtils.toggleBlockType(editorState, style))
-    : setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+  if (method === 'block') {
+    setEditorState(RichUtils.toggleBlockType(editorState, style));
+  } else if (method === 'inline') {
+    setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+  } else if (method === 'image') {
+    fileInputRef.current?.click();
+  }
+};
+const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if(file){
+    try {
+      const downloadURL = await uploadImageToFirebase(file)
+      const contentState = editorState.getCurrentContent();
+      const contentStateWithEntity = contentState.createEntity(
+        'IMAGE',
+        'IMMUTABLE',
+        { src: downloadURL }
+      );
+      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+
+      // Insert the 'IMAGE' entity as a new atomic block in the editor
+      const newEditorState = AtomicBlockUtils.insertAtomicBlock(
+        editorState,
+        entityKey,
+        ' '
+      );
+      setEditorState(newEditorState)
+      } catch(e){
+        console.log("Error handlinh image upload:", e)
+      }
+
+  }
 };
 
 const isActive = (style: string, method: string) => {
@@ -103,6 +157,13 @@ return (
         {item.icon || item.label}
       </Button>
     ))}
+          <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleImageUpload}
+          />
   </div>
 );
 };

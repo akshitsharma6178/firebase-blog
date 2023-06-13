@@ -34,8 +34,7 @@ function App() {
       <div className='main-container'>
         <Head 
         className='header-grid'/>
-        <Sidenav 
-        className='sidenav-grid'/>
+        <Sidenav className='sidenav-grid'/>
         <Routes>
           <Route path="/" element={ <Home/>} />
           <Route path="/new" element={ <NewPost/>} />

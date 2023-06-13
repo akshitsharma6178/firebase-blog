@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc, deleteField, setDoc, deleteDoc, getDocs, collection, query, where, orderBy, arrayRemove, arrayUnion, FieldValue} from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { getStorage } from "firebase/storage"
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -428,6 +428,21 @@ async function handlePostLike(key: string, status: boolean) {
     }
 }
 
+async function uploadImageToFirebase(file: File){
+        try {
+          const storageRef = ref(storage, "images/" + file.name);
+      
+          await uploadBytes(storageRef, file);
+      
+          // Return the download URL of the uploaded image
+          const downloadURL = await getDownloadURL(storageRef);
+          return downloadURL;
+        } catch (error) {
+          console.log("Error uploading image to Firebase Storage:", error);
+          throw error;
+        }
+      }
+
 
 export { 
     getHomePageObj, 
@@ -448,5 +463,6 @@ export {
     handleCommentLike,
     handlePostLike,
     cache,
+    uploadImageToFirebase,
     storage
 }

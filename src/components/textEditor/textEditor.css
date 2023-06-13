@@ -3,9 +3,17 @@
   .editor-wrapper {
     border: 1px solid #343536;
     background: #1A1A1B;
-    height: 20rem !important;
+    height: 20rem;
+    height: fit-content;
     width: 75%;
     border-radius: 0.25em;
+    overflow-y: auto;
+    resize: vertical;
+  }
+
+  .view-editor-wrapper {
+    background: #1A1A1B;
+    width: 75%;
   }
 
   .editor-wrapper.active {
@@ -16,8 +24,29 @@
     width: 100%;
     border: 1px solid #1A1A1B;
     border-top: none;
-    height: 250px;
+    height: min-content;
+    max-height: 250px;
     padding: 1rem;
+  }
+
+  .main-post .editor-container{
+    height: fit-content;
+    max-height: unset;
+  }
+
+  .main-new-post .editor-wrapper .editor-container{
+    height: 250px;
+  }
+
+  .post .editor-container.scrollable::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px; /* Set the height of the gradient area */
+    z-index: 8;
+    background: linear-gradient(to top,  rgba(68, 68, 68, 0.6), rgba(68, 68, 68, 0.4), rgba(68, 68, 68, 0));
   }
   
   .toolbar-grid {

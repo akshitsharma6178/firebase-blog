@@ -1,10 +1,10 @@
 // import { deletePost } from "../../services/firebase";
-import { useState } from "react";
 import "./homePostView.css"
 import { useNavigate } from "react-router-dom";
 import { Chip } from "@mui/material";
 import { getTimeDifference } from "../../services/firebase";
 import { SidenavUpDownVote } from "../sidenav-upvote-downvote/sidenav";
+import { TextEditor } from "../textEditor/textEditor";
 
 
 export interface MyType {
@@ -33,7 +33,6 @@ export interface HomePostProps {
         likedByMe?: boolean;
         dislikedByMe?: boolean;
         likeNum: number;
-        downloadURL?: string
     },
     className?: string
     filtered?: boolean
@@ -44,7 +43,6 @@ type Page = {
   };
 
 export function HomePost(props: HomePostProps){
-    const [showImage, setShowImage] = useState(false);
     const navigate = useNavigate();
     function handleNavigateandStorage(){
         const recentPages = localStorage.getItem('recentPages')? JSON.parse(localStorage.getItem('recentPages') as string) : []
@@ -60,9 +58,6 @@ export function HomePost(props: HomePostProps){
         }
         navigate(`post/${props.keyId}`)
     }
-    const handleToggleImage = () => {
-        setShowImage(!showImage);
-      };
     return (
         <>
         <div className={`post ${props.className}`}>
@@ -85,23 +80,10 @@ export function HomePost(props: HomePostProps){
                     /> 
                     <h2 className="title" onClick={handleNavigateandStorage}>{props.postObj.title}</h2>
                 </div>
-                {props.postObj.downloadURL ? 
-                    <div className={`post-image-container ${showImage ? '' : 'hide-image'}`}>
-                        <img loading="lazy" className="post-image" src={props.postObj.downloadURL} alt="" />
-                            <div className="show-image-button" onClick={handleToggleImage}>
-                                <span className="expand-text post-image-container-span">Show</span>
-                            </div>
-                        {showImage?                         
-                            <div className="hide-image-button" onClick={handleToggleImage}>
-                                <span className="expand-text post-image-container-span">Hide</span>
-                            </div>: 
-                        <></>}
-                    </div>  
-                    :
-                    <></>
-                }
-
-                <p dangerouslySetInnerHTML={{__html : props.postObj.content}}></p>
+                    <TextEditor 
+                    isViewOnly={true}
+                    editorStateData={ props.postObj.content }
+                    />
             </div>
             {/* <button className="btn delete-btn" onClick={() => handleDelete(props.keyId)}>Delete</button> */}
         </div>
