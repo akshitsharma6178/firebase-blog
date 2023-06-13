@@ -24,10 +24,10 @@ export function CommentList(props: propStructure) {
                 id={cmmt}
                 message={props.comments[cmmt].message}
                 user={props.comments[cmmt].owner}
-                likeCount={props.comments[cmmt].likeNum}
-                likedByMe={false}
+                likeNum={props.comments[cmmt].likeNum}
                 setLoad={props.setLoad}
                 createdAt={props.comments[cmmt].createdAt}
+                parent={props.comments[cmmt].parent}
             /> }) : null
             }
     </>

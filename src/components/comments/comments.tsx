@@ -22,8 +22,8 @@ interface cmmtProp {
   user: string,
   createdAt: string,
   likeNum: number,
-  likedByMe: boolean | undefined,
-  dislikedByMe: boolean | undefined,
+  likedByMe?: boolean | undefined,
+  dislikedByMe?: boolean | undefined,
   parent: string
   setLoad: () => void
 }
