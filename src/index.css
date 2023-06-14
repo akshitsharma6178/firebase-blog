@@ -445,7 +445,7 @@
     }
     .main-body{
       grid-template-columns: repeat(4, 1fr);
-      width: unset;
+      width: 100vw;
     }
     .fliter-grid-item{
       grid-column: 2 / span 2;
@@ -472,6 +472,11 @@
     .grid-item{
       width: 100vw;
       overflow-x: hidden;
+    }
+  }
+  @media screen and (max-width: 400px) {
+    .fullscreen-dialog{
+      width: 100vw;
     }
   }
 
