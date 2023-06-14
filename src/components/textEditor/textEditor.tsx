@@ -17,7 +17,8 @@ import { ImageComponent } from "../image/image";
 interface propStructure {
     setMethod?: (arg0: string) => void;
     isViewOnly: boolean;
-    editorStateData?: string
+    editorStateData?: string;
+    isMain?: boolean
 }
 
 export function TextEditor(props : propStructure) {
@@ -146,7 +147,7 @@ export function TextEditor(props : propStructure) {
 
   // }
   return (
-    <div className={`${props.isViewOnly? 'view-editor-wrapper' : 'editor-wrapper'} ${isActive ? 'active' : ''}`} onClick={focusEditor}>
+    <div className={`${props.isViewOnly? props.isMain? 'view-main-editor-wrapper': 'view-editor-wrapper' : 'editor-wrapper'} ${isActive ? 'active' : ''}`} onClick={focusEditor}>
         {!props.isViewOnly ?  
         <Toolbar editorState={editorState} setEditorState={setEditorState}/>
           : <></>

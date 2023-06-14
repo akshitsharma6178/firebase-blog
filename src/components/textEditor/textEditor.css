@@ -11,9 +11,13 @@
     resize: vertical;
   }
 
+  .view-main-editor-wrapper {
+    background: #1A1A1B;
+    width: 100%;
+  }
   .view-editor-wrapper {
     background: #1A1A1B;
-    width: 75%;
+    width: 85%;
   }
 
   .editor-wrapper.active {

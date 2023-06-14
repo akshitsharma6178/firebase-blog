@@ -450,6 +450,9 @@
     .fliter-grid-item{
       grid-column: 2 / span 2;
     }
+    .view-editor-wrapper {
+      padding-bottom: 1rem;
+    }
   }
 
   @media screen and (max-width: 755px) {
@@ -464,7 +467,7 @@
       grid-gap: unset;
     }
     .grid-item{
-      width: 99vw;
+      width: 100vw;
       overflow-x: hidden;
     }
   }

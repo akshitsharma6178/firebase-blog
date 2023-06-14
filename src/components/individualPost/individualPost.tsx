@@ -115,6 +115,7 @@ export function IndividualPost() {
                 
                 <TextEditor 
                     isViewOnly={true}
+                    isMain={true}
                     editorStateData={ postData.content }
                 />
                 
