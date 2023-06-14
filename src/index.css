@@ -453,6 +453,9 @@
     .view-editor-wrapper {
       padding-bottom: 1rem;
     }
+    .image-preview{
+      min-width: 200px;
+    }
   }
 
   @media screen and (max-width: 755px) {
