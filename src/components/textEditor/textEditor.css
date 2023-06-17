@@ -6,6 +6,7 @@
     height: 20rem;
     height: fit-content;
     width: 75%;
+    min-height: 300px;
     border-radius: 0.25em;
     overflow-y: auto;
     resize: vertical;
@@ -64,11 +65,14 @@
     padding: 0.2em;
     border-top-left-radius: 0.25em;
     border-top-right-radius: 0.25em;
+    position: sticky;
+    top: 0;
+    z-index: 5;
   }
   
   .superFancyBlockquote {
     color: #999;
-    background: #fff;
+    background: #272729;
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
     border-left: 2px solid #999;
@@ -85,6 +89,16 @@
     box-decoration-break: slice;
     padding: 0.3rem 2rem;
     border-radius: 0.2rem;
+  }
+
+  .view-editor-wrapper figure {
+    margin-inline-start: 0;
+  }
+
+  .view-main-editor-wrapper figure {
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
   
   .leftAlign {

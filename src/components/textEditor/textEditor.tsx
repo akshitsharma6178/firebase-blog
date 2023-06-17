@@ -68,13 +68,13 @@ export function TextEditor(props : propStructure) {
   // FOR INLINE STYLES
   const styleMap: DraftStyleMap = {
     CODE: {
-      backgroundColor: "rgba(0, 0, 0, 0.05)",
+      backgroundColor: "#272729",
       fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
       fontSize: 16,
       padding: 2,
     },
     HIGHLIGHT: {
-      backgroundColor: "#F7A5F7",
+      backgroundColor: "#f8ff00",
     },
     UPPERCASE: {
       textTransform: "uppercase",
@@ -83,11 +83,11 @@ export function TextEditor(props : propStructure) {
       textTransform: "lowercase",
     },
     CODEBLOCK: {
-      fontFamily: '"fira-code", "monospace"',
+      fontFamily: 'monospace',
       fontSize: "inherit",
-      background: "#ffeff0",
-      fontStyle: "italic",
+      background: "#272729",
       lineHeight: 1.5,
+      display: 'block',
       padding: "0.3rem 0.5rem",
       borderRadius: " 0.2rem",
     },

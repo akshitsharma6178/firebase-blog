@@ -301,11 +301,11 @@
     justify-content: center;
     align-items: flex-start;
   }
-  .chips {
+  /* .chips {
     color: white !important;
     border: solid 1px #343536 !important;
     font-size: smaller !important;
-  }
+  } */
 
   .main-container {
     display: grid;
@@ -477,6 +477,9 @@
   @media screen and (max-width: 400px) {
     .fullscreen-dialog{
       width: 100vw;
+    }
+    .view-main-editor-wrapper figure {
+      margin-inline-start: 0;
     }
   }
 

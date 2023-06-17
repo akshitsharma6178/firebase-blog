@@ -53,7 +53,19 @@ export function FilterMenu(props: filterPropStructure) {
             res[key] = originalPosts[key];
             return res;
         }, {} as MyType);
-        props.setPosts? props.setPosts(filteredPosts) : null;
+        if (Object.keys(filteredPosts).length === 0) {
+            // No posts for the selected filter, return an empty object
+            props.setPosts ? props.setPosts({noPost: {
+                title:'',
+                content: '',
+                user: '',
+                category: '',
+                createdAt: '',
+                likeNum: 0
+            }}) : null;
+        } else {
+            props.setPosts ? props.setPosts(filteredPosts) : null;
+        }
     }
 
     function handleClick(filterName: string) {

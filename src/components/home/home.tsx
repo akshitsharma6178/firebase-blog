@@ -78,7 +78,7 @@ export function Home() {
           </div> :
           <></>
         }
-        {  Object.keys(filteredPosts).length > 0 ? (
+        {  Object.keys(filteredPosts).length > 0 && !Object.keys(filteredPosts).includes('noPost') ? (
             Object.keys(filteredPosts).map((post) => (
                 <HomePost
                   key={post}
@@ -89,7 +89,8 @@ export function Home() {
                   setFilteredPosts={setFilteredPosts}
                 />
               ))
-        ) :
+        ) : Object.keys(filteredPosts).includes('noPost') ?
+            <p>No Posts</p> :
             JSON.stringify(posts) !== '{}' ? Object.keys(posts).map(post => {
                     return <HomePost 
                     key={post} 
