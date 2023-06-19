@@ -2,9 +2,11 @@
 import "./homePostView.css"
 import { useNavigate } from "react-router-dom";
 import { Chip } from "@mui/material";
-import { getTimeDifference } from "../../services/firebase";
+import { auth, deletePost, getTimeDifference } from "../../services/firebase";
 import { SidenavUpDownVote } from "../sidenav-upvote-downvote/sidenav";
 import { TextEditor } from "../textEditor/textEditor";
+import { OptionsMenu, optionsStructure } from "../menu/menu";
+import { FaTrash } from "react-icons/fa";
 
 
 export interface MyType {
@@ -44,6 +46,13 @@ type Page = {
 
 export function HomePost(props: HomePostProps){
     const navigate = useNavigate();
+    const optionMenuObject : optionsStructure = {
+        'delete': {
+          displayName: 'Delete',
+          onClick: () => {handleDelete(props.keyId)},
+          im: FaTrash
+        }
+      }
     function handleNavigateandStorage(){
         const recentPages = localStorage.getItem('recentPages')? JSON.parse(localStorage.getItem('recentPages') as string) : []
         const obj = {
@@ -57,6 +66,10 @@ export function HomePost(props: HomePostProps){
           window.dispatchEvent(event)
         }
         navigate(`post/${props.keyId}`)
+    }
+    function handleDelete(key: string){
+        deletePost(key)
+        props.setLoad? props.setLoad() : null
     }
     return (
         <>
@@ -85,6 +98,12 @@ export function HomePost(props: HomePostProps){
                     editorStateData={ props.postObj.content }
                     />
             </div>
+            {auth.currentUser?.displayName === props.postObj.user && (
+                <OptionsMenu
+                    options={optionMenuObject}
+                    className={'home-option-menu'}
+                />
+            )}
             {/* <button className="btn delete-btn" onClick={() => handleDelete(props.keyId)}>Delete</button> */}
         </div>
         </>

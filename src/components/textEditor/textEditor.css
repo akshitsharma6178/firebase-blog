@@ -18,7 +18,7 @@
   }
   .view-editor-wrapper {
     background: #1A1A1B;
-    width: 85%;
+    width: 25rem;
   }
 
   .editor-wrapper.active {
@@ -113,4 +113,7 @@
   .justifyAlign {
     text-align: justify;
   }
-  
+  .edit-wrapper{
+    width: auto;
+    overflow-x: hidden;
+  }

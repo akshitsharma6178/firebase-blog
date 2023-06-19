@@ -15,10 +15,12 @@ import './textEditor.css'
 import { ImageComponent } from "../image/image";
 
 interface propStructure {
-    setMethod?: (arg0: string) => void;
+    setMethod?: React.Dispatch<React.SetStateAction<string>>;
     isViewOnly: boolean;
     editorStateData?: string;
-    isMain?: boolean
+    isMain?: boolean;
+    setIsEdit?: React.Dispatch<React.SetStateAction<boolean>>;
+    updatePost?: () => void
 }
 
 export function TextEditor(props : propStructure) {
@@ -43,6 +45,7 @@ export function TextEditor(props : propStructure) {
   }, [props]);
 
   const focusEditor = () => {
+    if (props.isMain && !props.isViewOnly && props.setIsEdit) return
     editor.current?.focus();
   };
 
@@ -147,7 +150,7 @@ export function TextEditor(props : propStructure) {
 
   // }
   return (
-    <div className={`${props.isViewOnly? props.isMain? 'view-main-editor-wrapper': 'view-editor-wrapper' : 'editor-wrapper'} ${isActive ? 'active' : ''}`} onClick={focusEditor}>
+    <div className={`${props.isViewOnly? props.isMain? 'view-main-editor-wrapper': 'view-editor-wrapper' : 'editor-wrapper'} ${isActive ? 'active' : ''} ${(props.isMain && !props.isViewOnly) ? 'edit-wrapper' : ''}`} onClick={focusEditor}>
         {!props.isViewOnly ?  
         <Toolbar editorState={editorState} setEditorState={setEditorState}/>
           : <></>
@@ -170,6 +173,19 @@ export function TextEditor(props : propStructure) {
           }}
         />
       </div>
+      {
+        (props.isMain && !props.isViewOnly && props.setIsEdit)?
+        <div className={`comment-form-btn`}>
+            <button onClick={()=> {props.setIsEdit? props.setIsEdit(false): null}} className="lgn-btn post-cncl-btn">
+              {"Cancel"}
+            </button>
+            <button onClick={()=> {props.updatePost? props.updatePost(): null}} className="lgn-btn post-btn">
+              {"Update"}
+            </button>
+        </div>
+      : 
+      <></>
+      }
     </div>
   );
 }

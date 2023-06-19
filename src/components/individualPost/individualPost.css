@@ -51,6 +51,9 @@
     backdrop-filter: blur(10px);
     object-fit: cover;
 }
+.post-option-menu{
+    margin-left: auto;
+}
 
 .post-view-image{
     align-self: center;

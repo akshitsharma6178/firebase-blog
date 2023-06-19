@@ -47,7 +47,6 @@ export function NewPost() {
                 <TextEditor 
                  setMethod={setContent}
                  isViewOnly={false}/>  
-                {/* <textarea placeholder="Text (optional)" className="newpost-input newtext-area" value = {content} onChange={e=> {setContent(e.target.value)} }/><br /> */}
                 <div className="category">
                     <span>Choose a Category</span>
                     <FilterMenu 

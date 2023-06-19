@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { cache, getComments, getPostData, getTimeDifference, postNewComment } from "../../services/firebase";
+import { addPost, cache, getComments, getPostData, getTimeDifference, postNewComment, setLocalCache } from "../../services/firebase";
 import { useEffect, useState } from "react";
 import { CommentForm } from "../commentForm/commentForm";
 import { v4 as uuidv4} from 'uuid';
@@ -7,11 +7,12 @@ import { Comment } from "../comments/comments";
 import "./individualPost.css"
 import { auth } from "../../services/firebase";
 import { User } from "firebase/auth";
-import { FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { LoginDialog } from "../loginDialog/loginDialog";
 import { SidenavUpDownVote } from "../sidenav-upvote-downvote/sidenav";
 import { Chip } from "@mui/material";
 import { TextEditor } from "../textEditor/textEditor";
+import { OptionsMenu, optionsStructure } from "../menu/menu";
 
 interface postObjStructure {
     title: string,
@@ -19,7 +20,8 @@ interface postObjStructure {
     user: string,
     category: string,
     createdAt: string,
-    downloadURL?: string
+    downloadURL?: string,
+    likeNum: number
 }
 
 interface commntStructure {
@@ -49,7 +51,7 @@ interface postObj {
 export function IndividualPost() {
 
     const {postId} = useParams();
-    const [postData, setPostData] = useState<postObjStructure>({title: '', content: '', user: '', category: '', downloadURL: '', createdAt: ''})
+    const [postData, setPostData] = useState<postObjStructure>({title: '', content: '', user: '', category: '', downloadURL: '', createdAt: '', likeNum: 0})
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [cmmtData, setCmmtData] = useState<commntStructure>({})
@@ -58,6 +60,8 @@ export function IndividualPost() {
     const [user, setUser] = useState<User | null>(null); 
     const [isLogin, setisLogin] = useState(false);
     const [postObj, setPostObj] = useState<postObj>()
+    const [isEdit, setIsEdit] = useState(false)
+    const [content, setContent] = useState('');
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
           setUser(currentUser);
@@ -83,13 +87,54 @@ export function IndividualPost() {
         setLoading(false)
         setError("")
     },[validLoad, postId, isComments])
-
+    const optionMenuObject : optionsStructure = {
+        'edit': {
+          displayName: 'Edit',
+          onClick: () => {setIsEdit(prev => !prev)},
+          im: FaEdit
+        },
+        'delete': {
+          displayName: 'Delete',
+          onClick: () => {return},
+          im: FaTrash
+        }
+      }
     const setLoad = () => {
         setValidLoad(!validLoad);
     }
 
     function postCommentFunction(message: string) {
         return postNewComment(uuidv4(), message, postId? postId: '')
+    }
+    async function setPostOnline(){
+            const newPost = {[postId? postId : '']: {
+                title: postData.title,
+                content: content,
+                user: auth.currentUser?.displayName,
+                category: postData.category,
+                createdAt: new Date().toISOString().slice(0, 19),
+                downloadURL: '',
+                likeNum: postData.likeNum
+            }}
+            addPost(newPost).then(() => {
+                delete cache.homePageObj
+                if(localStorage.getItem('recentPage') !== null){
+                    const recentPage = JSON.parse(localStorage.getItem('recentPage') as string);
+                    recentPage.forEach((val: string | number) => {
+                        const key = Object.keys(val)
+                        if(key[0] === postId)
+                            delete recentPage[val].postId
+                    })
+                    localStorage.setItem('recentPage', JSON.stringify(recentPage));
+                }
+                if(postId)
+                delete cache[postId]
+                setLocalCache()
+                localStorage.removeItem('recentPages')
+                setIsEdit(false);
+                setLoad()
+            }
+            )
     }
 
 
@@ -111,12 +156,21 @@ export function IndividualPost() {
                     // onDelete={isFilterSelected(filter) ? () => handleDelete() : undefined}
                     /> 
                     <h2 className="title">{postData.title}</h2>
-                </div>
+                    {auth.currentUser?.displayName === postData.user && (
+                    <OptionsMenu
+                        options={optionMenuObject}
+                        className={'home-option-menu post-option-menu'}
+                    />
+                    )}
+            </div>
                 
                 <TextEditor 
-                    isViewOnly={true}
+                    setMethod={setContent}
+                    isViewOnly={!isEdit}
                     isMain={true}
-                    editorStateData={ postData.content }
+                    editorStateData={ isEdit? undefined: postData.content }
+                    setIsEdit={setIsEdit}
+                    updatePost={() => setPostOnline()}
                 />
                 
 

@@ -12,6 +12,7 @@ export interface optionsStructure {
 }
 interface menuPropStructure {
     options : optionsStructure
+    className?: string
 }
 
 
@@ -27,7 +28,7 @@ export function OptionsMenu(props : menuPropStructure) {
 
 
   return (
-    <div>
+    <div className={`${props.className? props.className : ''}`}>
       <Button
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}

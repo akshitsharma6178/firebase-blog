@@ -11,7 +11,7 @@
    /* top: 0px; */
    align-items: center;
    gap: 2rem;
-   z-index: 5;
+   z-index: 6;
    position: fixed;
    border-bottom: solid 1px #343536;
 }

@@ -178,10 +178,20 @@ function logout(){
 }
 
 async function deletePost(key: string){
+    delete cache?.homePageObj?.[key]
+    setLocalCache()
     const postRef = doc(db, 'posts', 'allPosts');
+    const postDataRef = doc(db, 'postData', key)
+    const commntRef = collection(db, 'comments');
+    const commntQuery = query(commntRef, where("parent","==",key))
     const field: {[key: string] : object}= {};
     field[key] = deleteField();
+    const querySnapshot = await getDocs(commntQuery);
     await updateDoc(postRef, field);
+    await deleteDoc(postDataRef)
+    querySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref)
+    })
 }
 
 async function getPostData(key: string){
