@@ -50,9 +50,10 @@ export function NewPost() {
                     <span>Choose a Category</span>
                     <FilterMenu 
                     setCategory={setCategory}
+                    addTrue={true}
                     />
                 </div>
-                <button className="postbtn lgn-btn" onClick={() => setPostOnline()}>Add</button>
+                <button className="postbtn lgn-btn" onClick={() => setPostOnline()}>Post</button>
             </div>
         </div>
         </>

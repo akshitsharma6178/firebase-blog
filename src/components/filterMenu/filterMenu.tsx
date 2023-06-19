@@ -1,7 +1,8 @@
 import { Chip } from "@mui/material"
-import { useEffect, useState } from "react"
-import { getFilters } from "../../services/firebase"
+import { ChangeEvent, useEffect, useState } from "react"
+import { addFilter, cache, getFilters, setLocalCache } from "../../services/firebase"
 import "./filterMenu.css"
+import { FaPlus } from "react-icons/fa"
 
 interface MyType {
     [key: string]: {
@@ -21,12 +22,31 @@ interface filterPropStructure {
     setPosts? : React.Dispatch<React.SetStateAction<MyType>>;
     setCategory? : (caterogy: string) => void
     posts? : MyType
+    addTrue? : boolean
 }
 
 export function FilterMenu(props: filterPropStructure) {
 
-    const [filters, setFilters] = useState([])
+    const [filters, setFilters] = useState<string[]>([])
     const [isSelected, setisSelected] = useState<string[]>([])
+    const [isEditing, setIsEditing] = useState(false);
+    const [labelText, setLabelText] = useState('Add Label');
+  
+    const handleLabelClick = () => {
+        if(labelText === 'Add Label')
+            setIsEditing(!isEditing);
+        else 
+            handleAddFilter()
+    };
+  
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setLabelText(e.target.value);
+    };
+  
+    const handleInputBlur = () => {
+      setIsEditing(false)
+      handleAddFilter()
+    };
 
     useEffect(() => {
         const fetchFilters = async() => {
@@ -54,7 +74,6 @@ export function FilterMenu(props: filterPropStructure) {
             return res;
         }, {} as MyType);
         if (Object.keys(filteredPosts).length === 0) {
-            // No posts for the selected filter, return an empty object
             props.setPosts ? props.setPosts({noPost: {
                 title:'',
                 content: '',
@@ -81,6 +100,29 @@ export function FilterMenu(props: filterPropStructure) {
         setisSelected(arr)
         props.setPosts? props.setPosts({}) : null;
     }
+    async function handleAddFilter(){
+        if(labelText === 'Add Label' || labelText === '') return
+        if(filters.includes(labelText)) {
+            console.error("Tag Already Present")
+            setLabelText('Add Label');
+            return
+        }
+        setFilters((currentFilters) => {
+            const newFilter = [...currentFilters, labelText]
+            cache.filters = {['main']: newFilter as []}
+            setLocalCache();
+            setLabelText('Add Label');
+            setIsEditing(false)
+            return newFilter
+        })
+        addFilter(labelText)
+    }
+    const handleKeyDown = (event : React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+          handleInputBlur();
+        }
+      };
+
     return (
         <div className={`${props.className}`}>
             <div className="filter-content">
@@ -95,6 +137,34 @@ export function FilterMenu(props: filterPropStructure) {
                         />
                     })
                 }
+                {props.addTrue ? 
+                <div>
+                {
+                    <Chip
+                    label={
+                        <>
+                        {isEditing ? (
+                            <>
+                            <input
+                                type="text"
+                                value={labelText}
+                                onChange={handleInputChange}
+                                onBlur={handleInputBlur}
+                                className="chip-input"
+                                autoFocus
+                                onKeyDown={handleKeyDown}
+                            />
+                            </>
+                        ) : (
+                            labelText
+                        )}
+                        </>
+                    }
+                    onClick={handleLabelClick}
+                    icon={<FaPlus />}
+                    />
+                }
+              </div>: <></>}
             </div>
         </div>
     )

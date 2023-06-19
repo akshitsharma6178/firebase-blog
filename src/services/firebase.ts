@@ -285,6 +285,12 @@ async function getFilters(){
     return data
 }
 
+async function addFilter(newFilter: string){
+    await updateDoc(doc(db, 'posts', 'filters'), {
+        main: arrayUnion(newFilter)
+    })
+}
+
 function getLocalCache() {
     return localStorage.getItem("cache") ? JSON.parse(localStorage.getItem("cache") as string) : {};
 }
@@ -464,5 +470,7 @@ export {
     handlePostLike,
     cache,
     uploadImageToFirebase,
-    storage
+    storage,
+    setLocalCache,
+    addFilter
 }

@@ -11,6 +11,24 @@
 .selected-chip{
     background: #D93B01 !important;
 }
+.chip-input{
+    background: none;
+    outline: unset;
+    border: unset;
+    color: white;
+    width: min-content;
+    max-width: 4rem;
+    z-index: 4;
+}
+.chip-input-btn{
+    background: none;
+    outline: unset;
+    border: unset;
+    color: white;
+    width: min-content;
+    max-width: 4rem;
+    z-index: 5;
+}
 /* .not-selected-chip{
     background: #343536 !important;
 } */
