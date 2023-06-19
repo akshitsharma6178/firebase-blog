@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addPost} from "../../services/firebase";
+import { addPost, cache, setLocalCache} from "../../services/firebase";
 import { v4 as uuidv4} from 'uuid';
 import { useNavigate} from 'react-router-dom';
 import "./newPost.css"
@@ -16,6 +16,8 @@ export function NewPost() {
     const [category, setCategory] = useState("");
 
     async function setPostOnline(){
+        delete cache.homePageObj
+        setLocalCache()
             const newPost = {[uuidv4()]: {
                 title: title,
                 content: content,
